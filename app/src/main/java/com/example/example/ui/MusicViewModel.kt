@@ -32,6 +32,10 @@ class MusicViewModel(
     private val _isPlaying = mutableStateOf(false)
     val isPlaying: androidx.compose.runtime.State<Boolean> = _isPlaying
 
+    // NUEVO: Estado para controlar si el modo aleatorio (Shuffle) está activo
+    private val _isShuffleEnabled = mutableStateOf(false)
+    val isShuffleEnabled: State<Boolean> = _isShuffleEnabled
+
     private var controllerFuture: ListenableFuture<MediaController>? = null
     private var controller: MediaController? = null
 
@@ -68,6 +72,47 @@ class MusicViewModel(
         controller?.prepare()
         controller?.play()
     }
+
+    fun playNext() {
+        val currentList = _songs.value
+        if (currentList.isEmpty()) return
+
+        // Si el modo aleatorio está activo, elegimos una canción al azar
+        if (_isShuffleEnabled.value) {
+            val randomIndex = (0 until currentList.size).random()
+            playSong(currentList[randomIndex])
+        } else {
+            // Si no, seguimos el orden normal de la lista
+            val currentIndex = currentList.indexOf(_currentSong.value)
+            if (currentIndex != -1 && currentIndex < currentList.size - 1) {
+                playSong(currentList[currentIndex + 1])
+            }
+        }
+    }
+
+    fun playPrevious() {
+        val currentList = _songs.value
+        if (currentList.isEmpty()) return
+
+        // En modo aleatorio, el botón "anterior" también elige una al azar
+        if (_isShuffleEnabled.value) {
+            val randomIndex = (0 until currentList.size).random()
+            playSong(currentList[randomIndex])
+        } else {
+            // En modo normal, retrocedemos un índice
+            val currentIndex = currentList.indexOf(_currentSong.value)
+            if (currentIndex > 0) {
+                playSong(currentList[currentIndex - 1])
+            }
+        }
+    }
+
+    // Función para activar/desactivar el modo aleatorio
+    fun toggleShuffle() {
+        _isShuffleEnabled.value = !_isShuffleEnabled.value
+    }
+    
+
 
     fun togglePlayPause() {
         if (controller?.isPlaying == true) {
