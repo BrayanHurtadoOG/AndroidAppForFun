@@ -177,7 +177,7 @@ fun ActionButtonsBar() {
 
 @Composable
 fun SongItem(song: Song, isSelected: Boolean, onClick: () -> Unit) {
-    // Cada item tiene un fondo semi-transparente que deja ver el anime detrás
+    // Cada item tiene un fondo semitransparente que deja ver el anime detrás
     Row(
         modifier = Modifier
             .fillMaxWidth()
