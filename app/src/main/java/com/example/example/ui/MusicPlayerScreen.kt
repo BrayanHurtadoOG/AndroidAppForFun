@@ -3,15 +3,40 @@ package com.example.example.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.*
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Shuffle
+import androidx.compose.material.icons.filled.SkipNext
+import androidx.compose.material.icons.filled.SkipPrevious
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.example.R
 import com.example.example.data.Song
+import kotlin.random.Random
 
 @Composable
 fun MusicPlayerScreen(viewModel: MusicViewModel) {
@@ -33,6 +59,7 @@ fun MusicPlayerScreen(viewModel: MusicViewModel) {
     val songs by viewModel.songs.collectAsState()
     val currentSong by viewModel.currentSong
     val isPlaying by viewModel.isPlaying
+    val isShuffleEnabled by viewModel.isShuffleEnabled
 
     // Scaffold principal configurado con fondo transparente para que se vea la imagen anime detrás
     Scaffold(
@@ -43,6 +70,7 @@ fun MusicPlayerScreen(viewModel: MusicViewModel) {
                 PlaybackControls(
                     song = currentSong!!,
                     isPlaying = isPlaying,
+                    viewModel= viewModel,
                     onTogglePlayPause = { viewModel.togglePlayPause() }
                 )
             }
@@ -61,7 +89,10 @@ fun MusicPlayerScreen(viewModel: MusicViewModel) {
 
             // 2. BARRA DE ACCIONES (Ordenar, Aleatorio y botón de Play grande)
             item {
-                ActionButtonsBar()
+                ActionButtonsBar(
+                    isShuffleEnabled = isShuffleEnabled,
+                    onToggleShuffle = { viewModel.toggleShuffle() }
+                )
             }
 
             // 3. LISTA DE CANCIONES
@@ -94,7 +125,7 @@ fun PlaylistHeader() {
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.White)
+            Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null, tint = Color.White)
             Row {
                 Icon(Icons.Default.FavoriteBorder, contentDescription = null, tint = Color.White)
                 Spacer(modifier = Modifier.width(16.dp))
@@ -124,7 +155,7 @@ fun PlaylistHeader() {
 
         // Título de la lista (ej. TEMITAS)
         Text(
-            text = "TEMITAS",
+            text = "Todas las Canciones",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White
@@ -139,7 +170,7 @@ fun PlaylistHeader() {
 }
 
 @Composable
-fun ActionButtonsBar() {
+fun ActionButtonsBar(isShuffleEnabled: Boolean, onToggleShuffle: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -158,8 +189,13 @@ fun ActionButtonsBar() {
         Spacer(modifier = Modifier.weight(1f))
 
         // Botón de Aleatorio (Shuffle)
-        IconButton(onClick = { /* TODO */ }) {
-            Icon(Icons.Default.Shuffle, contentDescription = null, tint = Color.White.copy(alpha = 0.7f))
+        IconButton(onClick = onToggleShuffle) {
+            // Si el modo aleatorio está activo, cambiamos el color a verde (Spotify style)
+            Icon(
+                Icons.Default.Shuffle, 
+                contentDescription = null, 
+                tint = if (isShuffleEnabled) Color(0xFF1DB954) else Color.White.copy(alpha = 0.7f)
+            )
         }
 
         // Botón de Play principal (Círculo verde grande)
@@ -234,12 +270,12 @@ fun SongItem(song: Song, isSelected: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-fun PlaybackControls(song: Song, isPlaying: Boolean, onTogglePlayPause: () -> Unit) {
+fun PlaybackControls(song: Song, isPlaying: Boolean, onTogglePlayPause: () -> Unit, viewModel: MusicViewModel) {
     // DISEÑO DE CÁPSULA FLOTANTE (Glassmorphism)
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp) // Separación de los bordes de la pantalla
+            .padding( bottom = 47.dp) // Separación de los bordes de la pantalla
     ) {
         Surface(
             modifier = Modifier
@@ -281,7 +317,7 @@ fun PlaybackControls(song: Song, isPlaying: Boolean, onTogglePlayPause: () -> Un
                 // Controles multimedia rápidos
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     // Botón Anterior
-                    IconButton(onClick = { /* TODO */ }) {
+                    IconButton(onClick = { viewModel.playPrevious() }) {
                         Icon(Icons.Default.SkipPrevious, contentDescription = null, tint = Color.White)
                     }
                     // Botón Play/Pause central
@@ -294,7 +330,7 @@ fun PlaybackControls(song: Song, isPlaying: Boolean, onTogglePlayPause: () -> Un
                         )
                     }
                     // Botón Siguiente
-                    IconButton(onClick = { /* TODO */ }) {
+                    IconButton(onClick = { viewModel.playNext() }) {
                         Icon(Icons.Default.SkipNext, contentDescription = null, tint = Color.White)
                     }
                     // Botón de lista/cola (opcional, como en tu captura)
