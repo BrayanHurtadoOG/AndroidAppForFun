@@ -358,7 +358,7 @@ fun SongItem(song: Song, isSelected: Boolean, onClick: () -> Unit) {
 }
 
 /** Formatea milisegundos como mm:ss. */
-fun formatMs(ms: Long): String {
+private fun formatMs(ms: Long): String {
     val totalSeconds = (ms / 1000).coerceAtLeast(0)
     val minutes = totalSeconds / 60
     val seconds = totalSeconds % 60
