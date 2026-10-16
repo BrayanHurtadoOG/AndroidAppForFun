@@ -47,6 +47,9 @@ fun ExampleApp() {
         )
     }
 
+    // Estado que controla si se muestra la pantalla completa de "Now Playing"
+    var showNowPlaying by remember { mutableStateOf(false) }
+
     // Configuramos el lanzador para pedir permisos al sistema
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -82,7 +85,10 @@ fun ExampleApp() {
         // 2. CONTENIDO PRINCIPAL (Se dibuja encima de la imagen)
         if (permissionGranted) {
             // Si hay permisos, mostramos la pantalla del reproductor
-            MusicPlayerScreen(viewModel)
+            MusicPlayerScreen(
+                viewModel = viewModel,
+                onOpenNowPlaying = { showNowPlaying = true }
+            )
         } else {
             // Si no hay permisos, mostramos un botón centrado para pedirlos
             Box(
@@ -96,6 +102,14 @@ fun ExampleApp() {
                     Text("Conceder Permiso para Música")
                 }
             }
+        }
+
+        // Pantalla completa de "Now Playing", superpuesta sobre el contenido principal
+        if (showNowPlaying) {
+            NowPlayingScreen(
+                viewModel = viewModel,
+                onClose = { showNowPlaying = false }
+            )
         }
     }
 }

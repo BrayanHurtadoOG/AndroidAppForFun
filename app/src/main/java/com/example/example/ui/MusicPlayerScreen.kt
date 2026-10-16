@@ -27,6 +27,8 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.RepeatOne
 import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
@@ -34,12 +36,19 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,29 +58,54 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.media3.common.Player
 import com.example.example.R
 import com.example.example.data.Song
-import kotlin.random.Random
+import com.example.example.ui.components.AlbumArt
+
+/** Rojo Sharingan: acento de la app (reemplaza el verde Spotify). */
+private val SharinganRed = Color(0xFFE53935)
 
 @Composable
-fun MusicPlayerScreen(viewModel: MusicViewModel) {
+fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = {}) {
     // Observamos los datos del ViewModel: lista de canciones, actual y estado de reproducción
     val songs by viewModel.songs.collectAsState()
     val currentSong by viewModel.currentSong
     val isPlaying by viewModel.isPlaying
     val isShuffleEnabled by viewModel.isShuffleEnabled
+    val repeatMode by viewModel.repeatMode
+    val positionMs by viewModel.positionMs
+    val durationMs by viewModel.durationMs
+
+    // Buscador: filtra la lista por título o artista
+    var query by remember { mutableStateOf("") }
+    val filteredSongs = remember(songs, query) {
+        if (query.isBlank()) {
+            songs
+        } else {
+            songs.filter {
+                it.title.contains(query, ignoreCase = true) ||
+                it.artist.contains(query, ignoreCase = true)
+            }
+        }
+    }
 
     // Scaffold principal configurado con fondo transparente para que se vea la imagen anime detrás
     Scaffold(
         containerColor = Color.Transparent,
         // La barra inferior ahora es un componente flotante (cápsula)
         bottomBar = {
-            if (currentSong != null) {
+            val current = currentSong
+            if (current != null) {
                 PlaybackControls(
-                    song = currentSong!!,
+                    song = current,
                     isPlaying = isPlaying,
-                    viewModel= viewModel,
-                    onTogglePlayPause = { viewModel.togglePlayPause() }
+                    positionMs = positionMs,
+                    durationMs = durationMs,
+                    onTogglePlayPause = { viewModel.togglePlayPause() },
+                    onSeekTo = { viewModel.seekTo(it) },
+                    onOpenNowPlaying = onOpenNowPlaying,
+                    viewModel = viewModel
                 )
             }
         }
@@ -84,26 +118,59 @@ fun MusicPlayerScreen(viewModel: MusicViewModel) {
         ) {
             // 1. CABECERA MODERNA (Imagen de playlist + Título + Estadísticas)
             item {
-                PlaylistHeader()
+                PlaylistHeader(songs = songs)
             }
 
-            // 2. BARRA DE ACCIONES (Ordenar, Aleatorio y botón de Play grande)
+            // 2. BARRA DE ACCIONES (Ordenar, Aleatorio, Repetir y botón de Play grande)
             item {
                 ActionButtonsBar(
+                    isPlaying = isPlaying,
                     isShuffleEnabled = isShuffleEnabled,
-                    onToggleShuffle = { viewModel.toggleShuffle() }
+                    repeatMode = repeatMode,
+                    onToggleShuffle = { viewModel.toggleShuffle() },
+                    onCycleRepeatMode = { viewModel.cycleRepeatMode() },
+                    onBigPlay = {
+                        if (currentSong != null) {
+                            viewModel.togglePlayPause()
+                        } else {
+                            filteredSongs.firstOrNull()?.let { viewModel.playSong(it) }
+                        }
+                    }
                 )
             }
 
-            // 3. LISTA DE CANCIONES
-            items(songs) { song ->
+            // 2b. BUSCADOR
+            item {
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = { query = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    placeholder = {
+                        Text("Buscar canciones...", color = Color.White.copy(alpha = 0.5f))
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(24.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        cursorColor = SharinganRed,
+                        focusedBorderColor = SharinganRed,
+                        unfocusedBorderColor = Color.White.copy(alpha = 0.3f)
+                    )
+                )
+            }
+
+            // 3. LISTA DE CANCIONES (filtrada por el buscador)
+            items(filteredSongs) { song ->
                 SongItem(
                     song = song,
                     isSelected = song == currentSong,
                     onClick = { viewModel.playSong(song) }
                 )
             }
-            
+
             // Espacio extra al final para que la barra flotante no tape la última canción
             item { Spacer(modifier = Modifier.height(80.dp)) }
         }
@@ -111,7 +178,7 @@ fun MusicPlayerScreen(viewModel: MusicViewModel) {
 }
 
 @Composable
-fun PlaylistHeader() {
+fun PlaylistHeader(songs: List<Song>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -160,9 +227,9 @@ fun PlaylistHeader() {
             fontWeight = FontWeight.Bold,
             color = Color.White
         )
-        // Contador de pistas
+        // Contador de pistas (dinámico, según la lista recibida)
         Text(
-            text = "109 pistas",
+            text = "${songs.size} pistas",
             fontSize = 14.sp,
             color = Color.White.copy(alpha = 0.7f)
         )
@@ -170,7 +237,14 @@ fun PlaylistHeader() {
 }
 
 @Composable
-fun ActionButtonsBar(isShuffleEnabled: Boolean, onToggleShuffle: () -> Unit) {
+fun ActionButtonsBar(
+    isPlaying: Boolean,
+    isShuffleEnabled: Boolean,
+    repeatMode: Int,
+    onToggleShuffle: () -> Unit,
+    onCycleRepeatMode: () -> Unit,
+    onBigPlay: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -185,27 +259,45 @@ fun ActionButtonsBar(isShuffleEnabled: Boolean, onToggleShuffle: () -> Unit) {
             color = Color.White.copy(alpha = 0.7f),
             fontSize = 14.sp
         )
-        
+
         Spacer(modifier = Modifier.weight(1f))
 
-        // Botón de Aleatorio (Shuffle)
-        IconButton(onClick = onToggleShuffle) {
-            // Si el modo aleatorio está activo, cambiamos el color a verde (Spotify style)
+        // Botón de Repetir (Repeat / RepeatOne según el modo)
+        IconButton(onClick = onCycleRepeatMode) {
             Icon(
-                Icons.Default.Shuffle, 
-                contentDescription = null, 
-                tint = if (isShuffleEnabled) Color(0xFF1DB954) else Color.White.copy(alpha = 0.7f)
+                imageVector = if (repeatMode == Player.REPEAT_MODE_ONE) Icons.Default.RepeatOne
+                else Icons.Default.Repeat,
+                contentDescription = null,
+                tint = if (repeatMode != Player.REPEAT_MODE_OFF) SharinganRed
+                else Color.White.copy(alpha = 0.7f)
             )
         }
 
-        // Botón de Play principal (Círculo verde grande)
+        // Botón de Aleatorio (Shuffle)
+        IconButton(onClick = onToggleShuffle) {
+            // Si el modo aleatorio está activo, cambiamos el color a rojo Sharingan
+            Icon(
+                Icons.Default.Shuffle,
+                contentDescription = null,
+                tint = if (isShuffleEnabled) SharinganRed else Color.White.copy(alpha = 0.7f)
+            )
+        }
+
+        // Botón de Play principal (Círculo rojo grande)
         Surface(
-            modifier = Modifier.size(56.dp),
+            modifier = Modifier
+                .size(56.dp)
+                .clickable(onClick = onBigPlay),
             shape = CircleShape,
-            color = Color(0xFF1DB954) // Color verde Spotify
+            color = SharinganRed // Color rojo Sharingan
         ) {
             Box(contentAlignment = Alignment.Center) {
-                Icon(Icons.Default.PlayArrow, contentDescription = null, tint = Color.Black, modifier = Modifier.size(32.dp))
+                Icon(
+                    imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                    contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier.size(32.dp)
+                )
             }
         }
     }
@@ -227,16 +319,12 @@ fun SongItem(song: Song, isSelected: Boolean, onClick: () -> Unit) {
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Miniatura de la canción
+        // Miniatura real del álbum (con fallback al Sharingan)
         Card(
             modifier = Modifier.size(50.dp),
             shape = RoundedCornerShape(4.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.sharingan),
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
+            AlbumArt(song = song, modifier = Modifier.fillMaxSize())
         }
 
         // Títulos y Artista
@@ -247,7 +335,7 @@ fun SongItem(song: Song, isSelected: Boolean, onClick: () -> Unit) {
         ) {
             Text(
                 text = song.title,
-                color = if (isSelected) Color(0xFF1DB954) else Color.White, // Título verde si suena
+                color = if (isSelected) SharinganRed else Color.White, // Título rojo si suena
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp,
                 maxLines = 1
@@ -269,73 +357,138 @@ fun SongItem(song: Song, isSelected: Boolean, onClick: () -> Unit) {
     }
 }
 
+/** Formatea milisegundos como mm:ss. */
+fun formatMs(ms: Long): String {
+    val totalSeconds = (ms / 1000).coerceAtLeast(0)
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return "%d:%02d".format(minutes, seconds)
+}
+
 @Composable
-fun PlaybackControls(song: Song, isPlaying: Boolean, onTogglePlayPause: () -> Unit, viewModel: MusicViewModel) {
+fun PlaybackControls(
+    song: Song,
+    isPlaying: Boolean,
+    positionMs: Long,
+    durationMs: Long,
+    onTogglePlayPause: () -> Unit,
+    onSeekTo: (Long) -> Unit,
+    onOpenNowPlaying: () -> Unit,
+    viewModel: MusicViewModel
+) {
+    // Estado local mientras el usuario arrastra la seekbar (evita saltos visuales)
+    var isDragging by remember { mutableStateOf(false) }
+    var dragPositionMs by remember { mutableStateOf(0L) }
+    val safeDurationMs = maxOf(durationMs, 1L)
+    val sliderValue = if (isDragging) dragPositionMs.toFloat()
+    else positionMs.toFloat().coerceIn(0f, safeDurationMs.toFloat())
+
     // DISEÑO DE CÁPSULA FLOTANTE (Glassmorphism)
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding( bottom = 47.dp) // Separación de los bordes de la pantalla
+            .padding(bottom = 47.dp) // Separación de los bordes de la pantalla
     ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp),
-            shape = RoundedCornerShape(32.dp), // Forma de cápsula completa
-            // Fondo oscuro muy transparente con efecto de elevación
-            color = Color.Black.copy(alpha = 0.85f),
-            tonalElevation = 8.dp
-        ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // Seekbar delgada encima de la cápsula
+            Slider(
+                value = sliderValue,
+                onValueChange = {
+                    isDragging = true
+                    dragPositionMs = it.toLong()
+                },
+                onValueChangeFinished = {
+                    isDragging = false
+                    onSeekTo(dragPositionMs)
+                },
+                valueRange = 0f..safeDurationMs.toFloat(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                colors = SliderDefaults.colors(
+                    thumbColor = SharinganRed,
+                    activeTrackColor = SharinganRed,
+                    inactiveTrackColor = Color.White.copy(alpha = 0.3f)
+                )
+            )
+            // Fila de tiempos mm:ss / mm:ss
             Row(
                 modifier = Modifier
-                    .padding(horizontal = 12.dp)
-                    .fillMaxSize(),
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Miniatura en los controles
-                Card(
-                    modifier = Modifier.size(44.dp),
-                    shape = CircleShape // Miniatura circular en el reproductor
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.sharingan),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop
-                    )
-                }
+                Text(
+                    text = formatMs(if (isDragging) dragPositionMs else positionMs),
+                    color = Color.White.copy(alpha = 0.7f),
+                    fontSize = 12.sp
+                )
+                Text(
+                    text = formatMs(durationMs),
+                    color = Color.White.copy(alpha = 0.7f),
+                    fontSize = 12.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
 
-                // Info de lo que suena
-                Column(
+            // Cápsula: toda es clickable y abre la pantalla Now Playing
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp)
+                    .clickable(onClick = onOpenNowPlaying),
+                shape = RoundedCornerShape(32.dp), // Forma de cápsula completa
+                // Fondo oscuro muy transparente con efecto de elevación
+                color = Color.Black.copy(alpha = 0.85f),
+                tonalElevation = 8.dp
+            ) {
+                Row(
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
-                        .weight(1f)
+                        .fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = song.title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1)
-                    Text(text = song.artist, color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp, maxLines = 1)
-                }
+                    // Miniatura real del álbum en los controles
+                    Card(
+                        modifier = Modifier.size(44.dp),
+                        shape = CircleShape // Miniatura circular en el reproductor
+                    ) {
+                        AlbumArt(song = song, modifier = Modifier.fillMaxSize())
+                    }
 
-                // Controles multimedia rápidos
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // Botón Anterior
-                    IconButton(onClick = { viewModel.playPrevious() }) {
-                        Icon(Icons.Default.SkipPrevious, contentDescription = null, tint = Color.White)
+                    // Info de lo que suena
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = 12.dp)
+                            .weight(1f)
+                    ) {
+                        Text(text = song.title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                        Text(text = song.artist, color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp, maxLines = 1)
                     }
-                    // Botón Play/Pause central
-                    IconButton(onClick = onTogglePlayPause) {
-                        Icon(
-                            imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(32.dp)
-                        )
-                    }
-                    // Botón Siguiente
-                    IconButton(onClick = { viewModel.playNext() }) {
-                        Icon(Icons.Default.SkipNext, contentDescription = null, tint = Color.White)
-                    }
-                    // Botón de lista/cola (opcional, como en tu captura)
-                    IconButton(onClick = { /* TODO */ }) {
-                        Icon(Icons.Default.Menu, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
+
+                    // Controles multimedia rápidos
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        // Botón Anterior
+                        IconButton(onClick = { viewModel.playPrevious() }) {
+                            Icon(Icons.Default.SkipPrevious, contentDescription = null, tint = Color.White)
+                        }
+                        // Botón Play/Pause central
+                        IconButton(onClick = onTogglePlayPause) {
+                            Icon(
+                                imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                        // Botón Siguiente
+                        IconButton(onClick = { viewModel.playNext() }) {
+                            Icon(Icons.Default.SkipNext, contentDescription = null, tint = Color.White)
+                        }
+                        // Botón de lista/cola (opcional, como en tu captura)
+                        IconButton(onClick = { /* TODO */ }) {
+                            Icon(Icons.Default.Menu, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
+                        }
                     }
                 }
             }
