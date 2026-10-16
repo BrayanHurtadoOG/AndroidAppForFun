@@ -1,35 +1,53 @@
-# 🎵 Example - Reproductor de Música Android
+# 🔥 Uchiha Player — Reproductor de Música Android
+
+> Rama activa de desarrollo: `kurama/uchiha-player` (temática del clan Uchiha + funciones completas del reproductor).
 
 ## 📋 Descripción General
-**Example** es una aplicación de reproducción de música local construida con las últimas tecnologías de Android: **Jetpack Compose**, **Media3 (ExoPlayer)**, **ViewModel** y arquitectura moderna. La app permite:
+**Uchiha Player** (antes "Example") es una aplicación de reproducción de música local construida con las últimas tecnologías de Android: **Jetpack Compose**, **Media3 (ExoPlayer)**, **ViewModel** y arquitectura moderna. La app permite:
 - Escanear y listar todas las canciones almacenadas en el dispositivo
 - Reproducir/pausar canciones desde una interfaz moderna
 - Reproducción en segundo plano mediante un Foreground Service
-- Controles de reproducción persistentes en la barra inferior
-- Tema dinámico (Material You) con soporte para modo claro/oscuro
+- Cola de reproducción real: al terminar una canción avanza sola a la siguiente
+- Controles de reproducción persistentes en la barra inferior + seekbar arrastrable
+- Shuffle y modos de repetición (off / all / one)
+- Búsqueda/filtrado de canciones por título o artista
+- Pantalla completa "Now Playing" con carátula grande y slider de volumen
+- Carátulas reales desde MediaStore (con fallback al Sharingan)
+- Persistencia con DataStore: recuerda la última canción y la posición
+- Notificación de reproducción con arte Uchiha
+- Tema oscuro fijo del clan Uchiha (negros profundos + rojo Sharingan)
 
 ---
 
 ## 🏗️ Arquitectura del Proyecto
 
 ```
-Example/
+UchihaPlayer/
 ├── app/
 │   ├── src/
 │   │   ├── main/
 │   │   │   ├── java/com/example/example/
 │   │   │   │   ├── data/
-│   │   │   │   │   └── MediaRepository.kt          # Repositorio: acceso a MediaStore
+│   │   │   │   │   ├── MediaRepository.kt          # Repositorio: acceso a MediaStore (+ albumId)
+│   │   │   │   │   └── UserPreferences.kt          # DataStore: última canción + posición
 │   │   │   │   ├── ui/
+│   │   │   │   │   ├── components/
+│   │   │   │   │   │   └── AlbumArt.kt             # Carátula desde MediaStore (fallback Sharingan)
 │   │   │   │   │   ├── theme/
-│   │   │   │   │   │   ├── Color.kt                # Definición de colores
-│   │   │   │   │   │   ├── Theme.kt                # Configuración del tema Material3
+│   │   │   │   │   │   ├── Color.kt                # Paleta Uchiha (negro + rojo Sharingan)
+│   │   │   │   │   │   ├── Theme.kt                # Tema oscuro fijo del clan (sin dynamic color)
 │   │   │   │   │   │   └── Type.kt                 # Tipografía
-│   │   │   │   │   ├── MusicPlayerScreen.kt        # UI Compose: pantalla principal
-│   │   │   │   │   └── MusicViewModel.kt           # ViewModel: lógica de negocio
+│   │   │   │   │   ├── MusicPlayerScreen.kt        # UI Compose: lista + buscador + seekbar
+│   │   │   │   │   ├── NowPlayingScreen.kt         # UI Compose: pantalla completa Now Playing
+│   │   │   │   │   └── MusicViewModel.kt           # ViewModel: cola real, shuffle/repeat, volumen
 │   │   │   │   ├── MainActivity.kt                 # Activity principal (entry point)
-│   │   │   │   └── MusicService.kt                 # Foreground Service de reproducción
-│   │   │   ├── res/                                 # Recursos (layouts, valores, íconos)
+│   │   │   │   └── MusicService.kt                 # Foreground Service + notificación Uchiha
+│   │   │   ├── res/
+│   │   │   │   ├── drawable/
+│   │   │   │   │   ├── ic_uchiha_fan.xml           # Logo del clan: abanico (mitad blanca/roja)
+│   │   │   │   │   ├── itachi.jpg / itachimange.jpg# Arte de fondo (Itachi / Mangekyou)
+│   │   │   │   │   └── sharingan.jpg               # Fallback de carátula
+│   │   │   │   └── ...                             # Recursos (valores, íconos, temas)
 │   │   │   └── AndroidManifest.xml                 # Manifiesto de la app
 │   │   ├── androidTest/                            # Tests instrumentados
 │   │   └── test/                                   # Tests unitarios
@@ -60,7 +78,7 @@ Example/
 - **Jetpack Compose 2026.02.01 (BOM)** - Toolkit declarativo moderno
 - **Material3** - Sistema de diseño de Google
 - **Scaffold, LazyColumn, Card, IconButton** - Componentes Compose
-- **Tema dinámico (Material You)** - Adaptable al fondo de pantalla del usuario (Android 12+)
+- **Tema oscuro fijo del clan Uchiha** - Paleta propia (negro #0A0A0C + rojo Sharingan #E53935), dynamic color desactivado a propósito
 
 ### Arquitectura y Ciclo de Vida
 - **ViewModel** + **StateFlow** - Gestión del estado sobreviviendo a cambios de configuración
@@ -222,16 +240,24 @@ context.contentResolver.query(
 ---
 
 ## 💡 Mejoras Sugeridas para Expandir el Proyecto
-- [ ] Barra de progreso/seeking en los controles
-- [ ] Botones Siguiente/Anterior
-- [ ] Notificación de reproducción personalizada
-- [ ] Shuffle / Repeat modes
-- [ ] Persistencia de la última canción reproducida (DataStore)
-- [ ] Diapositiva para controlar volumen
-- [ ] Búsqueda/filtrado de canciones
-- [ ] Playlists (con Room Database)
-- [ ] Pantalla de "Now Playing" a pantalla completa
-- [ ] Miniatura de álbum (carátula) desde MediaStore
-- [ ] Coil para carga de imágenes
-- [ ] Hilt para inyección de dependencias (reemplazar Factory manual)
-- [ ] Navigation Compose para múltiples pantallas
+- [x] Barra de progreso/seeking en los controles (seekbar arrastrable en cápsula y Now Playing)
+- [x] Botones Siguiente/Anterior (delegan en el player; respetan shuffle/repeat)
+- [x] Notificación de reproducción personalizada (`DefaultMediaNotificationProvider` + arte Uchiha)
+- [x] Shuffle / Repeat modes (OFF → ALL → ONE, aplicados al ExoPlayer)
+- [x] Persistencia de la última canción reproducida (DataStore: canción + posición)
+- [x] Diapositiva para controlar volumen (slider en Now Playing)
+- [x] Búsqueda/filtrado de canciones (por título o artista)
+- [ ] Playlists (con Room Database) — pendiente: requiere entities/DAO/database + UI de gestión
+- [x] Pantalla de "Now Playing" a pantalla completa (fondo Mangekyou de Itachi)
+- [x] Miniatura de álbum (carátula) desde MediaStore (fallback al Sharingan)
+- [ ] Coil para carga de imágenes — pendiente (hoy se usa `loadThumbnail` + `painterResource`)
+- [ ] Hilt para inyección de dependencias (reemplazar Factory manual) — pendiente
+- [ ] Navigation Compose para múltiples pantallas — pendiente (hoy navegación por estado)
+
+## 🔥 Temática del clan Uchiha
+- **Paleta** (`ui/theme/`): `UchihaBlack #0A0A0C`, superficies oscuras, `SharinganRed #E53935` como primario, `AkatsukiRed`/`SharinganDarkRed` como acentos. Tema siempre oscuro, sin dynamic color.
+- **Logo** (`res/drawable/ic_uchiha_fan.xml`): vector del abanico del clan Uchiha — círculo con mitad superior blanca e inferior roja, mango gris. Usado como ícono de la app (adaptive icon normal y round), logo en Now Playing y arte de fallback en notificaciones (`android.resource://` URI en el `MediaMetadata`).
+- **Arte**: `itachi.jpg` como fondo de la pantalla principal, `itachimange.jpg` como fondo de Now Playing, `sharingan.jpg` como fallback de carátulas.
+
+## ⚠️ Nota de compilación
+Este código se escribió y revisó sin Android SDK/Java disponibles en el entorno de desarrollo (no se pudo compilar ahí). Antes de instalar en un dispositivo, abrir el proyecto en **Android Studio**, sincronizar Gradle y compilar (`./gradlew installDebug`). Revisar el Logcat en la primera ejecución por si alguna API necesita ajuste fino.
