@@ -22,20 +22,25 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.example.R
 import com.example.example.data.MediaRepository
+import com.example.example.data.PlaylistRepository
+import com.example.example.data.db.UchihaDatabase
 
 @Composable
 fun ExampleApp() {
     // Obtenemos el contexto actual de Android
     val context = LocalContext.current
     
-    // Creamos y recordamos el repositorio para que no se reinicie en cada recreación
+    // Creamos y recordamos los repositorios para que no se reinicien en cada recreación
     val repository = remember { MediaRepository(context) }
-    
-    // Inicializamos el ViewModel con una Factory para pasarle el repositorio
+    val playlistRepository = remember {
+        PlaylistRepository(UchihaDatabase.get(context).playlistDao())
+    }
+
+    // Inicializamos el ViewModel con una Factory para pasarle los repositorios
     val viewModel: MusicViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MusicViewModel(repository) as T
+                return MusicViewModel(repository, playlistRepository) as T
             }
         }
     )

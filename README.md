@@ -247,7 +247,7 @@ context.contentResolver.query(
 - [x] Persistencia de la última canción reproducida (DataStore: canción + posición)
 - [x] Diapositiva para controlar volumen (slider en Now Playing)
 - [x] Búsqueda/filtrado de canciones (por título o artista)
-- [ ] Playlists (con Room Database) — pendiente: requiere entities/DAO/database + UI de gestión
+- [x] Playlists (con Room Database) — `PlaylistEntity`/`PlaylistSongEntity`, `PlaylistDao`, `UchihaDatabase`, pestaña Playlists en la UI con crear/borrar/añadir/quitar/reproducir
 - [x] Pantalla de "Now Playing" a pantalla completa (fondo Mangekyou de Itachi)
 - [x] Miniatura de álbum (carátula) desde MediaStore (fallback al Sharingan)
 - [ ] Coil para carga de imágenes — pendiente (hoy se usa `loadThumbnail` + `painterResource`)
