@@ -1,30 +1,24 @@
 package com.example.example.ui.components
 
 import android.content.ContentUris
-import android.graphics.Bitmap
 import android.provider.MediaStore
-import android.util.Size
-import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.example.example.R
 import com.example.example.data.Song
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 /**
- * Muestra el artwork del álbum de una canción cargándolo desde MediaStore
- * en un hilo de IO. Si no hay arte (albumId inválido o error), muestra
- * el [fallbackRes].
+ * Muestra el artwork del álbum de una canción cargándolo con Coil desde
+ * la URI del álbum en MediaStore (con caché en memoria y disco).
+ * Si no hay arte (albumId inválido o error de carga), muestra el
+ * [fallbackRes] tanto de placeholder como de error.
  */
 @Composable
 fun AlbumArt(
@@ -34,39 +28,32 @@ fun AlbumArt(
     fallbackRes: Int = R.drawable.sharingan
 ) {
     val context = LocalContext.current
-    var bitmap by remember(song.id) { mutableStateOf<Bitmap?>(null) }
+    val fallback = painterResource(fallbackRes)
 
-    LaunchedEffect(song.id) {
-        bitmap = withContext(Dispatchers.IO) {
-            try {
-                context.contentResolver.loadThumbnail(
+    // albumId <= 0: no hay álbum asociado; ni siquiera se intenta la carga
+    // y AsyncImage muestra el painter de error directamente.
+    val model = remember(song.albumId, context) {
+        if (song.albumId > 0) {
+            ImageRequest.Builder(context)
+                .data(
                     ContentUris.withAppendedId(
                         MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
                         song.albumId
-                    ),
-                    Size(256, 256),
-                    null
+                    )
                 )
-            } catch (e: Exception) {
-                null
-            }
+                .crossfade(true)
+                .build()
+        } else {
+            null
         }
     }
 
-    val bmp = bitmap
-    if (bmp != null) {
-        Image(
-            bitmap = bmp.asImageBitmap(),
-            contentDescription = null,
-            modifier = modifier,
-            contentScale = contentScale
-        )
-    } else {
-        Image(
-            painter = painterResource(fallbackRes),
-            contentDescription = null,
-            modifier = modifier,
-            contentScale = contentScale
-        )
-    }
+    AsyncImage(
+        model = model,
+        contentDescription = null,
+        modifier = modifier,
+        contentScale = contentScale,
+        placeholder = fallback,
+        error = fallback
+    )
 }

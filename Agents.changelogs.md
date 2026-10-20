@@ -58,6 +58,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 - **Cambios:** creado este archivo con la división de tareas Kurama / Kaguya y las reglas de coordinación.
 - **Pendiente:** Shinku revisa en `master` y crea la rama `Shinku-review` con sus correcciones.
 
+### [2026-10-20] Kaguya — Migración de carátulas a Coil
+
+- **Rama:** `kaguya/coil-album-art`
+- **Estado:** en revisión
+- **Archivos:** `Agents.changelogs.md`, `gradle/libs.versions.toml`, `app/build.gradle.kts`, `app/src/main/java/com/example/example/ui/components/AlbumArt.kt`
+- **Cambios:** registro de tarea antes de tocar código. Alcance: sustituir la carga manual de miniaturas (`ContentResolver.loadThumbnail` + estado) por Coil 3 (`AsyncImage`) manteniendo la misma firma pública de `AlbumArt`, la caché y el fallback Sharingan. Sin cambios en las pantallas que lo usan ni en la capa de datos. Hecho: Coil 3.3.0 (`io.coil-kt.coil3:coil-compose`) en el catálogo, dependencia añadida, `AlbumArt` reescrito con `AsyncImage` + `ImageRequest` (crossfade, placeholder/error = fallback, sin petición si `albumId <= 0`). Sin miniatura fija de 256px: Coil ajusta al tamaño del composable. Llamadas existentes (`MusicPlayerScreen`, `NowPlayingScreen`) sin cambios.
+- **Pendiente:** Shinku compila y corre los tests; PR e integración vía Kurama.
+
 ### Historial previo (antes de existir este archivo)
 
 - **[2026-10-16] Kurama — Uchiha Player v1.** Fix de cola (`setMediaItems`, auto-avance), seekbar arrastrable, anterior/siguiente, shuffle/repeat, carátulas desde MediaStore (fallback Sharingan), búsqueda, Now Playing completa, DataStore (última canción + posición), notificación personalizada, slider de volumen, temática Uchiha. Fusionado en `master` vía PR #4.
