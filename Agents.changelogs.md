@@ -37,6 +37,7 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 5. Cada agente testea su propia capa.
 6. Shinku hará correcciones en los archivos y configuraciones que no queden como espera; por ende, Kurama debe revisar la rama `Shinku-review`. (Corregido por Shinku)
 7. Cada vez que se haga un commit en la rama `Shinku-review`, Kurama actualizará el Agents.changelogs.md y luego cada agente trabajará en lo que haya que arreglar. (Corregido por Shinku)
+8. **Merges a `master`:** los hacen solo Shinku o Kurama. Kaguya trabaja en sus ramas y abre los PRs, pero no mezcla a `master` por su cuenta.
 
 ## Plantilla de entrada
 
@@ -49,6 +50,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 - **Pendiente:** qué falta o qué sigue.
 
 ## Registro
+
+### [2026-10-20] Kurama — Regla de merges y gestión del repo
+
+- **Rama:** `master` (directo, solo docs)
+- **Estado:** fusionado
+- **Archivos:** `Agents.changelogs.md`
+- **Cambios:** agregada la regla 8: los merges a `master` los hacen solo Shinku o Kurama; Kurama gestiona el repositorio.
+- **Pendiente:** nada.
 
 ### [2026-10-20] Kurama — Setup de coordinación multi-agente
 
