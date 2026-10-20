@@ -42,10 +42,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.tabIndicatorOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -62,9 +67,7 @@ import androidx.media3.common.Player
 import com.example.example.R
 import com.example.example.data.Song
 import com.example.example.ui.components.AlbumArt
-
-/** Rojo Sharingan: acento de la app (reemplaza el verde Spotify). */
-private val SharinganRed = Color(0xFFE53935)
+import com.example.example.ui.theme.SharinganRed
 
 @Composable
 fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = {}) {
@@ -90,6 +93,11 @@ fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = 
         }
     }
 
+    // Pestaña activa: 0 = Canciones, 1 = Playlists (Room)
+    var selectedTab by remember { mutableIntStateOf(0) }
+    // Canción para la que se abrió el diálogo "Añadir a playlist"
+    var addTarget by remember { mutableStateOf<Song?>(null) }
+
     // Scaffold principal configurado con fondo transparente para que se vea la imagen anime detrás
     Scaffold(
         containerColor = Color.Transparent,
@@ -110,11 +118,107 @@ fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = 
             }
         }
     ) { padding ->
-        // LazyColumn es ideal para listas largas, solo renderiza lo que se ve
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+        ) {
+            // Pestañas: Canciones | Playlists
+            TabRow(
+                selectedTabIndex = selectedTab,
+                containerColor = Color.Transparent,
+                contentColor = Color.White,
+                indicator = { tabPositions ->
+                    TabRowDefaults.SecondaryIndicator(
+                        modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
+                        color = SharinganRed
+                    )
+                }
+            ) {
+                Tab(
+                    selected = selectedTab == 0,
+                    onClick = { selectedTab = 0 },
+                    text = {
+                        Text(
+                            "Canciones",
+                            color = if (selectedTab == 0) Color.White else Color.White.copy(alpha = 0.6f),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                )
+                Tab(
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 },
+                    text = {
+                        Text(
+                            "Playlists",
+                            color = if (selectedTab == 1) Color.White else Color.White.copy(alpha = 0.6f),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                )
+            }
+
+            if (selectedTab == 0) {
+                SongsListContent(
+                    songs = songs,
+                    filteredSongs = filteredSongs,
+                    currentSong = currentSong,
+                    isPlaying = isPlaying,
+                    isShuffleEnabled = isShuffleEnabled,
+                    repeatMode = repeatMode,
+                    query = query,
+                    onQueryChange = { query = it },
+                    onSongClick = { viewModel.playSong(it) },
+                    onAddToPlaylist = { addTarget = it },
+                    onToggleShuffle = { viewModel.toggleShuffle() },
+                    onCycleRepeatMode = { viewModel.cycleRepeatMode() },
+                    onBigPlay = {
+                        if (currentSong != null) {
+                            viewModel.togglePlayPause()
+                        } else {
+                            filteredSongs.firstOrNull()?.let { viewModel.playSong(it) }
+                        }
+                    }
+                )
+            } else {
+                PlaylistsTab(viewModel = viewModel)
+            }
+        }
+    }
+
+    // Diálogo "Añadir a playlist" que se abre desde el ⋮ de cada canción
+    addTarget?.let { song ->
+        AddToPlaylistDialog(
+            song = song,
+            viewModel = viewModel,
+            onDismiss = { addTarget = null }
+        )
+    }
+}
+
+/**
+ * Contenido de la pestaña "Canciones": cabecera, acciones, buscador y lista.
+ */
+@Composable
+private fun SongsListContent(
+    songs: List<Song>,
+    filteredSongs: List<Song>,
+    currentSong: Song?,
+    isPlaying: Boolean,
+    isShuffleEnabled: Boolean,
+    repeatMode: Int,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onSongClick: (Song) -> Unit,
+    onAddToPlaylist: (Song) -> Unit,
+    onToggleShuffle: () -> Unit,
+    onCycleRepeatMode: () -> Unit,
+    onBigPlay: () -> Unit
+) {
+        // LazyColumn es ideal para listas largas, solo renderiza lo que se ve
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
         ) {
             // 1. CABECERA MODERNA (Imagen de playlist + Título + Estadísticas)
             item {
@@ -127,15 +231,9 @@ fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = 
                     isPlaying = isPlaying,
                     isShuffleEnabled = isShuffleEnabled,
                     repeatMode = repeatMode,
-                    onToggleShuffle = { viewModel.toggleShuffle() },
-                    onCycleRepeatMode = { viewModel.cycleRepeatMode() },
-                    onBigPlay = {
-                        if (currentSong != null) {
-                            viewModel.togglePlayPause()
-                        } else {
-                            filteredSongs.firstOrNull()?.let { viewModel.playSong(it) }
-                        }
-                    }
+                    onToggleShuffle = onToggleShuffle,
+                    onCycleRepeatMode = onCycleRepeatMode,
+                    onBigPlay = onBigPlay
                 )
             }
 
@@ -143,7 +241,7 @@ fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = 
             item {
                 OutlinedTextField(
                     value = query,
-                    onValueChange = { query = it },
+                    onValueChange = onQueryChange,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -167,14 +265,14 @@ fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = 
                 SongItem(
                     song = song,
                     isSelected = song == currentSong,
-                    onClick = { viewModel.playSong(song) }
+                    onClick = { onSongClick(song) },
+                    onAddToPlaylist = { onAddToPlaylist(song) }
                 )
             }
 
             // Espacio extra al final para que la barra flotante no tape la última canción
             item { Spacer(modifier = Modifier.height(80.dp)) }
         }
-    }
 }
 
 @Composable
@@ -304,7 +402,12 @@ fun ActionButtonsBar(
 }
 
 @Composable
-fun SongItem(song: Song, isSelected: Boolean, onClick: () -> Unit) {
+fun SongItem(
+    song: Song,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    onAddToPlaylist: () -> Unit = {}
+) {
     // Cada item tiene un fondo semitransparente que deja ver el anime detrás
     Row(
         modifier = Modifier
@@ -348,12 +451,14 @@ fun SongItem(song: Song, isSelected: Boolean, onClick: () -> Unit) {
             )
         }
 
-        // Icono de opciones por canción
-        Icon(
-            Icons.Default.MoreVert,
-            contentDescription = null,
-            tint = Color.White.copy(alpha = 0.5f)
-        )
+        // ⋮ de la canción: abre el diálogo "Añadir a playlist"
+        IconButton(onClick = onAddToPlaylist) {
+            Icon(
+                Icons.Default.MoreVert,
+                contentDescription = "Opciones",
+                tint = Color.White.copy(alpha = 0.5f)
+            )
+        }
     }
 }
 

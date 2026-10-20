@@ -16,8 +16,12 @@ import androidx.media3.session.SessionToken
 import com.example.example.MusicService
 import com.example.example.R
 import com.example.example.data.MediaRepository
+import com.example.example.data.PlaylistRepository
 import com.example.example.data.Song
 import com.example.example.data.UserPreferences
+import com.example.example.data.db.Playlist
+import com.example.example.data.db.PlaylistSongEntity
+import kotlinx.coroutines.flow.Flow
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import kotlinx.coroutines.Job
@@ -29,11 +33,23 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class MusicViewModel(
-    private val repository: MediaRepository
+    private val repository: MediaRepository,
+    private val playlistRepository: PlaylistRepository
 ) : ViewModel() {
 
     private val _songs = MutableStateFlow<List<Song>>(emptyList())
     val songs: StateFlow<List<Song>> = _songs
+
+    // Playlists del usuario (Room)
+    private val _playlists = MutableStateFlow<List<Playlist>>(emptyList())
+    val playlists: StateFlow<List<Playlist>> = _playlists
+
+    init {
+        // Observa las playlists en segundo plano: la UI se actualiza sola.
+        viewModelScope.launch {
+            playlistRepository.playlists.collect { _playlists.value = it }
+        }
+    }
 
     private val _currentSong = mutableStateOf<Song?>(null)
     val currentSong: State<Song?> = _currentSong
@@ -273,6 +289,77 @@ class MusicViewModel(
 
     fun seekTo(positionMs: Long) {
         controller?.seekTo(positionMs)
+    }
+
+    // ---- Playlists (Room) ----
+
+    fun createPlaylist(name: String) {
+        viewModelScope.launch {
+            try {
+                playlistRepository.createPlaylist(name)
+            } catch (e: Exception) {
+                // Best effort: la UI ya muestra el estado real desde el Flow.
+            }
+        }
+    }
+
+    fun deletePlaylist(playlistId: Long) {
+        viewModelScope.launch {
+            try {
+                playlistRepository.deletePlaylist(playlistId)
+            } catch (e: Exception) {
+                // Best effort.
+            }
+        }
+    }
+
+    fun addSongToPlaylist(playlistId: Long, song: Song) {
+        viewModelScope.launch {
+            try {
+                playlistRepository.addSong(playlistId, song)
+            } catch (e: Exception) {
+                // Best effort.
+            }
+        }
+    }
+
+    fun removeSongFromPlaylist(playlistId: Long, song: Song) {
+        viewModelScope.launch {
+            try {
+                playlistRepository.removeSong(playlistId, song)
+            } catch (e: Exception) {
+                // Best effort.
+            }
+        }
+    }
+
+    fun songsInPlaylist(playlistId: Long): Flow<List<PlaylistSongEntity>> =
+        playlistRepository.songsOf(playlistId)
+
+    /** Resuelve el Song real de MediaStore para una entrada de playlist. */
+    fun songByMediaId(mediaStoreId: Long): Song? =
+        _songs.value.find { it.id == mediaStoreId }
+
+    /**
+     * Reproduce una playlist: carga solo sus canciones como cola del player
+     * y empieza desde la primera.
+     */
+    fun playPlaylist(playlistId: Long) {
+        val ctrl = controller ?: return
+        viewModelScope.launch {
+            val entries = try {
+                playlistRepository.songsOf(playlistId).firstOrNull()
+            } catch (e: Exception) {
+                null
+            } ?: return@launch
+            val byId = _songs.value.associateBy { it.id }
+            val playlistSongs = entries.mapNotNull { byId[it.mediaStoreId] }
+            if (playlistSongs.isEmpty()) return@launch
+            val mediaItems = playlistSongs.map { it.toMediaItem() }
+            ctrl.setMediaItems(mediaItems, 0, 0L)
+            ctrl.prepare()
+            ctrl.play()
+        }
     }
 
     fun togglePlayPause() {
