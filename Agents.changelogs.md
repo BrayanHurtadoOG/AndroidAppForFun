@@ -51,6 +51,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-04] Kaguya — Migración a Navigation Compose (issue #9)
+
+- **Rama:** `kaguya/navigation`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `gradle/libs.versions.toml`, `app/build.gradle.kts`, `app/src/main/java/com/example/example/ui/navigation/UchihaNavHost.kt` (nuevo), `app/src/main/java/com/example/example/ui/ExampleApp.kt`, `app/src/main/java/com/example/example/ui/MusicPlayerScreen.kt`, `app/src/main/java/com/example/example/ui/PlaylistsScreen.kt`, `Agents.changelogs.md`
+- **Cambios:** migración a Navigation Compose 2.9.0 del Sprint 1 (issue #9): `UchihaNavHost` con rutas `songs`, `playlists`, `playlist_detail/{playlistId}` y `now_playing`; `ExampleApp.kt` deja de navegar por estado (`showNowPlaying` eliminado) y muestra el NavHost; las pestañas Canciones/Playlists son destinos (con `launchSingleTop` + estado guardado) y el detalle de playlist es ruta con argumento `playlistId` (si la playlist ya no existe muestra «Playlist no encontrada» en vez de crashear); el botón atrás lo resuelve el back stack. Sin tocar `data/`, `di/` ni `MusicViewModel`; `PlaylistDetailScreen` pasa de privada a pública solo para usarla como destino.
+- **Pendiente:** Shinku sincroniza y compila en Android Studio, navega entre pantallas y prueba el botón atrás (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: la rama parte de `master` sin la migración a Hilt (PR #6 sin fusionar) ni Coil (rama pendiente de QA); al fusionar Hilt habrá que adaptar `ExampleApp.kt` a `hiltViewModel()`.
+
 ### [2026-11-04] Kurama — Flujo de sprints (coordinación)
 
 - **Rama:** `kurama/sprint-coordination`

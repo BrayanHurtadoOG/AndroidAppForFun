@@ -69,8 +69,23 @@ import com.example.example.data.Song
 import com.example.example.ui.components.AlbumArt
 import com.example.example.ui.theme.SharinganRed
 
+/**
+ * Pantalla principal: pestañas Canciones / Playlists con la barra de reproducción.
+ *
+ * La pestaña activa la decide el destino de navegación que la muestra
+ * ([initialTab]); al tocar una pestaña se avisa con [onTabSelected] para que el
+ * NavHost cambie de destino, y al tocar una playlist se avisa con
+ * [onPlaylistClick] para abrir su detalle como ruta. Los valores por defecto
+ * mantienen el comportamiento anterior sin navegación (útil en previews).
+ */
 @Composable
-fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = {}) {
+fun MusicPlayerScreen(
+    viewModel: MusicViewModel,
+    onOpenNowPlaying: () -> Unit = {},
+    initialTab: Int = 0,
+    onTabSelected: (Int) -> Unit = {},
+    onPlaylistClick: ((com.example.example.data.db.Playlist) -> Unit)? = null
+) {
     // Observamos los datos del ViewModel: lista de canciones, actual y estado de reproducción
     val songs by viewModel.songs.collectAsState()
     val currentSong by viewModel.currentSong
@@ -93,8 +108,9 @@ fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = 
         }
     }
 
-    // Pestaña activa: 0 = Canciones, 1 = Playlists (Room)
-    var selectedTab by remember { mutableIntStateOf(0) }
+    // Pestaña activa: 0 = Canciones, 1 = Playlists (Room). La decide el destino
+    // de navegación (initialTab); al tocar otra pestaña se avisa al NavHost.
+    var selectedTab by remember { mutableIntStateOf(initialTab) }
     // Canción para la que se abrió el diálogo "Añadir a playlist"
     var addTarget by remember { mutableStateOf<Song?>(null) }
 
@@ -137,7 +153,7 @@ fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = 
             ) {
                 Tab(
                     selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 },
+                    onClick = { selectedTab = 0; onTabSelected(0) },
                     text = {
                         Text(
                             "Canciones",
@@ -148,7 +164,7 @@ fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = 
                 )
                 Tab(
                     selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
+                    onClick = { selectedTab = 1; onTabSelected(1) },
                     text = {
                         Text(
                             "Playlists",
@@ -182,7 +198,10 @@ fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = 
                     }
                 )
             } else {
-                PlaylistsTab(viewModel = viewModel)
+                PlaylistsTab(
+                    viewModel = viewModel,
+                    onPlaylistClick = onPlaylistClick
+                )
             }
         }
     }
