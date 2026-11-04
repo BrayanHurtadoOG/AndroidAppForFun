@@ -51,6 +51,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-04] Kurama — Migración a Hilt (inyección de dependencias)
+
+- **Rama:** `kurama/hilt-migration`
+- **Estado:** en revisión (PR abierto; pendiente build en Android Studio, sin SDK en la VM)
+- **Archivos:** `gradle/libs.versions.toml`, `app/build.gradle.kts`, `UchihaApplication.kt` (nuevo, `@HiltAndroidApp`), `AndroidManifest.xml`, `di/AppModule.kt` (nuevo: provee `UchihaDatabase` singleton + `PlaylistDao`), `data/MediaRepository.kt`, `data/PlaylistRepository.kt`, `data/UserPreferences.kt`, `data/db/UchihaDatabase.kt`, `ui/MusicViewModel.kt`, `ui/ExampleApp.kt`, `MainActivity.kt`, `README.md`
+- **Cambios:** Hilt 2.57.1 + KSP + `hilt-navigation-compose` 1.2.0 en el version catalog. `@Inject constructor` en los 3 repositorios/preferencias; Hilt es dueño del singleton de Room (se eliminó el `companion get()` manual de `UchihaDatabase`). `MusicViewModel` es `@HiltViewModel` con `UserPreferences` y `@ApplicationContext` inyectados — se eliminaron los `var` manuales y `initController()` ya no recibe Context. `MainActivity` con `@AndroidEntryPoint`; `ExampleApp` usa `hiltViewModel()` en lugar de la Factory manual y los `remember` de repositorios.
+- **Pendiente:** Shinku compila en Android Studio y reporta; al fusionar, avisar a Kaguya porque la migración es transversal (toca `MusicViewModel.kt`/`ExampleApp.kt` de su área UI).
+
 ### [2026-10-20] Kurama — Regla de merges y gestión del repo
 
 - **Rama:** `master` (directo, solo docs)
