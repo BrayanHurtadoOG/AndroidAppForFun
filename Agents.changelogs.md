@@ -51,6 +51,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-05] Kurama — Pulido: formatMs compartido + test unitario (turno sin veredicto)
+
+- **Rama:** `kurama/polish-2026-11-05`
+- **Estado:** en curso
+- **Archivos:** `ui/TimeFormat.kt` (nuevo), `ui/MusicPlayerScreen.kt`, `ui/NowPlayingScreen.kt`, `test/.../TimeFormatTest.kt` (nuevo), `README.md`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el QA de Hilt, no se toman tareas nuevas). `formatMs` estaba duplicado verbatim en dos pantallas; se extrae a una única función interna compartida y se cubre con test unitario (reemplaza el placeholder `ExampleUnitTest`). README: árbol de arquitectura actualizado (faltaban `data/db/` y `PlaylistsScreen.kt`) y rama activa corregida a `master`.
+- **Pendiente:** Shinku compila en Android Studio y confirma que el test unitario pasa (`./gradlew testDebugUnitTest`); PR contra `master`, sin fusionar hasta su `ok`.
+
 ### [2026-11-04] Kurama — Flujo de sprints (coordinación)
 
 - **Rama:** `kurama/sprint-coordination`
