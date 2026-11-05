@@ -51,6 +51,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-05] Kaguya — Pulido: eliminar SharinganRed duplicado (turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-05`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/theme/Uchiha.kt` (eliminado), `app/src/main/java/com/example/example/ui/theme/Color.kt`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el QA de Hilt (issue #7, PR #6) ni sobre Coil (issue #8), no se toman tareas nuevas). `SharinganRed` estaba declarado dos veces en el mismo paquete `ui.theme` — en `Color.kt` y en `Uchiha.kt` — con el mismo valor (`0xFFE53935`); en Kotlin dos declaraciones top-level con el mismo nombre en el mismo paquete son declaraciones en conflicto, y `Uchiha.kt` solo contenía esa declaración, así que se elimina el archivo y su comentario pasa a `Color.kt`. Ningún uso cambia: todos los archivos importan `SharinganRed` del paquete y el valor es idéntico.
+- **Pendiente:** Shinku sincroniza y compila en Android Studio para confirmar que el error de declaración en conflicto desaparece (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: las ramas abiertas PR #6 (Hilt), PR #13 (Navigation) y `kaguya/coil-album-art` parten de `master` con el duplicado, así que al fusionar esto deberán rebasar.
+
 ### [2026-11-04] Kurama — Flujo de sprints (coordinación)
 
 - **Rama:** `kurama/sprint-coordination`
