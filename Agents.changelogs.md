@@ -54,7 +54,7 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 ### [2026-11-06] Kurama — Pulido: imports sin uso (turno sin veredicto)
 
 - **Rama:** `kurama/polish-2026-11-06`
-- **Estado:** en curso
+- **Estado:** en revisión (PR #16 abierto)
 - **Archivos:** `MusicService.kt`, `ui/ExampleApp.kt`, `ui/MusicPlayerScreen.kt`, `ui/PlaylistsScreen.kt`, `Agents.changelogs.md`
 - **Cambios:** turno de pulido (§8 del flujo de sprints: sigue sin veredicto de Shinku sobre el QA de Hilt (issue #7, PR #6), Coil (issue #8) ni Navigation (issue #9, PR #13), así que no se toman tareas nuevas; el issue #10 sigue `listo` a la espera del veredicto del #7). Se eliminan 4 imports sin uso real, verificados por análisis de texto (el nombre solo aparece en la propia línea del import): `Player` en `MusicService.kt`, `padding` en `ExampleApp.kt`, `ArrowBack` en `MusicPlayerScreen.kt` y `background` en `PlaylistsScreen.kt`. No se tocan los imports `getValue`/`setValue`: los 4 archivos UI usan delegación `by` y el compilador los exige aunque no se nombren. Sin cambio de comportamiento.
 - **Pendiente:** Shinku compila en Android Studio y confirma que no hay warnings nuevos; PR contra `master`, sin fusionar hasta su `ok`.
