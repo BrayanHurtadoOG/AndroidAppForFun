@@ -48,8 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.media3.common.Player
 import com.example.example.R
 import com.example.example.ui.components.AlbumArt
-
-private val UchihaRed = Color(0xFFE53935)
+import com.example.example.ui.theme.SharinganRed
 
 /**
  * Pantalla completa de "Now Playing" con estética Uchiha.
@@ -127,7 +126,7 @@ fun NowPlayingScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 TextButton(onClick = onClose) {
-                    Text(text = "Volver", color = UchihaRed)
+                    Text(text = "Volver", color = SharinganRed)
                 }
                 Spacer(modifier = Modifier.weight(1f))
             } else {
@@ -209,7 +208,7 @@ fun NowPlayingScreen(
                         Icon(
                             imageVector = Icons.Default.Shuffle,
                             contentDescription = "Aleatorio",
-                            tint = if (isShuffleEnabled) UchihaRed else Color.White.copy(alpha = 0.7f),
+                            tint = if (isShuffleEnabled) SharinganRed else Color.White.copy(alpha = 0.7f),
                             modifier = Modifier.size(28.dp)
                         )
                     }
@@ -225,7 +224,7 @@ fun NowPlayingScreen(
                         onClick = { viewModel.togglePlayPause() },
                         modifier = Modifier
                             .size(72.dp)
-                            .background(UchihaRed, CircleShape)
+                            .background(SharinganRed, CircleShape)
                     ) {
                         Icon(
                             imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
@@ -246,7 +245,7 @@ fun NowPlayingScreen(
                         Icon(
                             imageVector = if (repeatMode == Player.REPEAT_MODE_ONE) Icons.Default.RepeatOne else Icons.Default.Repeat,
                             contentDescription = "Repetir",
-                            tint = if (repeatMode != Player.REPEAT_MODE_OFF) UchihaRed else Color.White.copy(alpha = 0.7f),
+                            tint = if (repeatMode != Player.REPEAT_MODE_OFF) SharinganRed else Color.White.copy(alpha = 0.7f),
                             modifier = Modifier.size(28.dp)
                         )
                     }

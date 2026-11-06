@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 val UchihaBlack = Color(0xFF0A0A0C)
 val UchihaSurface = Color(0xFF141419)
 val UchihaSurfaceVariant = Color(0xFF1E1E26)
+val UchihaDialog = Color(0xFF1C1C1E)
 val SharinganRed = Color(0xFFE53935)
 val SharinganDarkRed = Color(0xFFB71C1C)
 val AkatsukiRed = Color(0xFFD32F2F)

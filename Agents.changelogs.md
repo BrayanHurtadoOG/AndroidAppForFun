@@ -51,6 +51,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-06] Kaguya — Pulido: unificar literales duplicados en UI (turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-06`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/NowPlayingScreen.kt`, `app/src/main/java/com/example/example/ui/PlaylistsScreen.kt`, `app/src/main/java/com/example/example/ui/theme/Color.kt`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el QA de Hilt (issue #7, PR #6), Coil (issue #8) ni Navigation (issue #9, PR #13), no se toman tareas nuevas; el issue #9 sigue `en-revision` y el #10 sigue `listo` a la espera del veredicto del #7). Tres dedups de literales en la UI, sin cambio de comportamiento: (1) `NowPlayingScreen.kt` definía su propio `UchihaRed = Color(0xFFE53935)`, idéntico al `SharinganRed` del tema — ahora usa `SharinganRed` (4 usos) y se elimina el val privado; (2) el color de fondo de diálogo `Color(0xFF1C1C1E)` estaba repetido 3 veces en `PlaylistsScreen.kt` — ahora es `UchihaDialog` en `Color.kt`; (3) el texto «1 pista / N pistas» estaba repetido 3 veces en `PlaylistsScreen.kt` — ahora es el helper privado `trackCountText(count)`. No se tocan los imports sin uso que ya limpia el PR #16 de Kurama ni el duplicado de `SharinganRed` del PR #15.
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: las ramas abiertas PR #6 (Hilt), PR #13 (Navigation), PR #14, PR #15 y PR #16 parten de `master` sin estos cambios, así que al fusionar deberán rebasar si tocan las mismas líneas.
+
 ### [2026-11-04] Kurama — Flujo de sprints (coordinación)
 
 - **Rama:** `kurama/sprint-coordination`
