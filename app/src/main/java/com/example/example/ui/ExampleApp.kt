@@ -7,7 +7,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -17,33 +16,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.example.R
-import com.example.example.data.MediaRepository
-import com.example.example.data.PlaylistRepository
-import com.example.example.data.db.UchihaDatabase
 
 @Composable
 fun ExampleApp() {
     // Obtenemos el contexto actual de Android
     val context = LocalContext.current
-    
-    // Creamos y recordamos los repositorios para que no se reinicien en cada recreación
-    val repository = remember { MediaRepository(context) }
-    val playlistRepository = remember {
-        PlaylistRepository(UchihaDatabase.get(context).playlistDao())
-    }
 
-    // Inicializamos el ViewModel con una Factory para pasarle los repositorios
-    val viewModel: MusicViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MusicViewModel(repository, playlistRepository) as T
-            }
-        }
-    )
+    // ViewModel con dependencias inyectadas por Hilt
+    // (reemplaza la Factory manual y los remember de repositorios).
+    val viewModel: MusicViewModel = hiltViewModel()
 
     // Estado que rastrea si el usuario concedió el permiso de audio
     var permissionGranted by remember {
@@ -69,7 +52,7 @@ fun ExampleApp() {
     // Efecto que se ejecuta al iniciar la aplicación
     LaunchedEffect(Unit) {
         // Inicializa el controlador de reproducción (ExoPlayer)
-        viewModel.initController(context)
+        viewModel.initController()
         // Si ya tenemos el permiso, cargamos la lista de canciones
         if (permissionGranted) {
             viewModel.loadSongs()
@@ -78,7 +61,7 @@ fun ExampleApp() {
 
     // Contenedor principal Box para apilar el fondo y el contenido
     Box(modifier = Modifier.fillMaxSize()) {
-        
+
         // 1. IMAGEN DE FONDO (Se dibuja primero para quedar abajo)
         Image(
             painter = painterResource(id = R.drawable.itachi),
