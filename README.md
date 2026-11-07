@@ -251,7 +251,7 @@ context.contentResolver.query(
 - [x] Pantalla de "Now Playing" a pantalla completa (fondo Mangekyou de Itachi)
 - [x] Miniatura de álbum (carátula) desde MediaStore (fallback al Sharingan)
 - [ ] Coil para carga de imágenes — pendiente (hoy se usa `loadThumbnail` + `painterResource`)
-- [ ] Hilt para inyección de dependencias (reemplazar Factory manual) — pendiente
+- [x] Hilt para inyección de dependencias (reemplazar Factory manual) — rama `kurama/hilt-migration` (pendiente de build en Android Studio)
 - [ ] Navigation Compose para múltiples pantallas — pendiente (hoy navegación por estado)
 
 ## 🔥 Temática del clan Uchiha
