@@ -1,3 +1,3 @@
 package com.example.example.ui.theme
 
-// Shared Uchiha constants (colors are in Color.kt)
+// Theme colors are defined in Color.kt

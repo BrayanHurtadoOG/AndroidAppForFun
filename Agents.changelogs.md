@@ -51,6 +51,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-04] Kurama — Flujo de sprints (coordinación)
+
+- **Rama:** `kurama/sprint-coordination`
+- **Estado:** en revisión (PR abierto)
+- **Archivos:** `Agents.coordination.md` (nuevo), `Agents.changelogs.md`
+- **Cambios:** adoptado el flujo de sprints de 1–2 días: tablero "Uchiha Player — Sprints" (Team Planning) con límite WIP 3 en revisión, convención de issues `[Agente]` + estados `backlog → listo → en-curso → en-revision → hecho`, turnos Kurama 10:00 / Kaguya 14:00 / Shinku QA de noche, reglas de WIP y de noche sin veredicto. Issues del Sprint 1 creados (#7–#11). Kaguya debe leer `Agents.coordination.md` y programar su cron de las 14:00.
+- **Pendiente:** Shinku revisa y fusiona; crea el tablero en GitHub con la plantilla Team Planning.
+
 ### [2026-11-04] Kurama — Migración a Hilt (inyección de dependencias)
 
 - **Rama:** `kurama/hilt-migration`
