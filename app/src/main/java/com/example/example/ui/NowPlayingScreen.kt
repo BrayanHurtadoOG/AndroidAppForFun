@@ -48,7 +48,8 @@ import androidx.compose.ui.unit.dp
 import androidx.media3.common.Player
 import com.example.example.R
 import com.example.example.ui.components.AlbumArt
-
+import com.example.example.ui.theme.UchihaWhiteMuted
+import com.example.example.ui.theme.UchihaWhiteSecondary
 private val UchihaRed = Color(0xFFE53935)
 
 /**
