@@ -55,7 +55,7 @@ opción de apoyarse en el trabajo de la mañana.
   - `en-curso`: el agente la tomó (actualiza el cuerpo del issue).
   - `en-revision`: PR abierto (el agente comenta el link del PR en el issue).
   - `hecho`: Shinku probó y dio `ok` → se cierra el issue.
-  - Si el veredicto pide arreglos: vuelve a `en-curso` con el comentario de Shinku describiendo el fallo.
+  - Si el veredicto pide arreglos: vuelve a `en-curso` con el comentario de Shinku describiendo el fallo (salvo errores de compilación: ver sección 7).
 - Todo issue de implementación trae **Contrato** (rama, archivos que toca, qué NO toca)
   y **Criterios de aceptación** (cómo Shinku lo va a probar). Sin eso, el issue no está
   listo y el agente no la toma: un issue ambiguo es un día perdido.
@@ -102,7 +102,8 @@ Para programar este turno, crea en tu chat un cron diario a las 14:00
 1. Revisa los PRs del día: compila en Android Studio, prueba en el teléfono.
 2. En cada issue en `en-revision`, comenta el veredicto:
    - `ok` → el agente (o tú) cierra el issue; mueves la tarjeta a Hecho.
-   - Fallos → describes qué falla (log si puedes); el issue vuelve a `en-curso`.
+   - Fallos funcionales → describes qué falla (log si puedes); el issue vuelve a `en-curso`.
+   - **Errores que impiden compilar** → los arreglas tú con el agente de Android Studio y fusionas, sin esperar al agente dueño: sin compilar no se puede probar lo funcional. Le dices al agente dueño en una línea qué era el error (import, manifest, versión del catálogo, etc.) para no repetirlo. Los agentes no pueden compilar en la VM (sin Android SDK), así que sus PRs llegan sin prueba de compilación real.
 3. Mueve las tarjetas del tablero según el estado real.
 4. Fusiona a `master` lo que esté en `ok` (o pídele a Kurama que lo haga).
 
