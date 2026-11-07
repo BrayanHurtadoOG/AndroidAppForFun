@@ -52,6 +52,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-07] Kaguya — Pulido: blancos con alfa del tema (0.7 / 0.6)
+
+- **Rama:** `kaguya/polish-2026-11-07`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/theme/Color.kt`, `app/src/main/java/com/example/example/ui/MusicPlayerScreen.kt`, `app/src/main/java/com/example/example/ui/NowPlayingScreen.kt`, `app/src/main/java/com/example/example/ui/PlaylistsScreen.kt`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre Navigation (issue #9, PR #13) ni sobre Coil (issue #8, con error de compilación KSP pendiente que él está arreglando); ningún issue [Kaguya] en `listo`; WIP en-revision: 1 (#9)). Dos dedups de literales en la UI, sin cambio visual: `Color.White.copy(alpha = 0.7f)` (×16 en las 3 pantallas) pasa a `UchihaWhiteSecondary` y `Color.White.copy(alpha = 0.6f)` (×12) a `UchihaWhiteMuted`, ambos definidos en `theme/Color.kt`. No se toca el catálogo de versiones ni las ramas `kaguya/coil-album-art` / `kaguya/navigation` (su KSP `2.2.10-1.0.31` no resuelve; master ya usa `2.2.10-2.0.2`).
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual. Al fusionar, el PR #17 toca las mismas expresiones de `NowPlayingScreen.kt` (`tint = if (isShuffleEnabled) UchihaRed else …` y `tint = if (repeatMode …) UchihaRed else …`): resolver aplicando ambas sustituciones.
+
 ### [2026-11-06] Kurama — Regla QA: errores de compilación los arregla Shinku
 
 - **Rama:** `kurama/qa-compile-fix`
