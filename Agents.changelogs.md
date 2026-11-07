@@ -38,6 +38,7 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 6. Shinku hará correcciones en los archivos y configuraciones que no queden como espera; por ende, Kurama debe revisar la rama `Shinku-review`. (Corregido por Shinku)
 7. Cada vez que se haga un commit en la rama `Shinku-review`, Kurama actualizará el Agents.changelogs.md y luego cada agente trabajará en lo que haya que arreglar. (Corregido por Shinku)
 8. **Merges a `master`:** los hacen solo Shinku o Kurama. Kaguya trabaja en sus ramas y abre los PRs, pero no mezcla a `master` por su cuenta.
+9. **Errores de compilación en QA:** si un PR no compila, Shinku lo arregla con el agente de Android Studio y fusiona; avisa en una línea qué era el error. Los errores funcionales van como comentario en el issue y los arregla el agente dueño (el issue vuelve a `en-curso`).
 
 ## Plantilla de entrada
 
@@ -50,6 +51,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 - **Pendiente:** qué falta o qué sigue.
 
 ## Registro
+
+### [2026-11-06] Kurama — Regla QA: errores de compilación los arregla Shinku
+
+- **Rama:** `kurama/qa-compile-fix`
+- **Estado:** en revisión (PR abierto)
+- **Archivos:** `Agents.coordination.md`, `Agents.changelogs.md`
+- **Cambios:** regla acordada con Shinku el 2026-11-06 tras el QA de Hilt (PR #6 no compilaba: `ExampleApp` invocaba `hiltViewModel()` en el Preview de Compose y el preview no puede instanciar el ViewModel sin constructor sin argumentos; lo arregló él con el agente de Android Studio y fusionó): si un PR no compila, Shinku lo arregla y fusiona, y avisa en una línea qué era el error; los errores funcionales van como comentario en el issue y los arregla el agente dueño. Aplica igual a los PRs de Kaguya.
+- **Pendiente:** Shinku revisa y fusiona; Kaguya lee la regla nueva.
 
 ### [2026-11-04] Kurama — Flujo de sprints (coordinación)
 
