@@ -1,6 +1,6 @@
 # 🔥 Uchiha Player — Reproductor de Música Android
 
-> Rama activa de desarrollo: `kurama/uchiha-player` (temática del clan Uchiha + funciones completas del reproductor).
+> Rama activa de desarrollo: `master` (temática del clan Uchiha + funciones completas del reproductor).
 
 ## 📋 Descripción General
 **Uchiha Player** (antes "Example") es una aplicación de reproducción de música local construida con las últimas tecnologías de Android: **Jetpack Compose**, **Media3 (ExoPlayer)**, **ViewModel** y arquitectura moderna. La app permite:
@@ -29,7 +29,12 @@ UchihaPlayer/
 │   │   │   ├── java/com/example/example/
 │   │   │   │   ├── data/
 │   │   │   │   │   ├── MediaRepository.kt          # Repositorio: acceso a MediaStore (+ albumId)
-│   │   │   │   │   └── UserPreferences.kt          # DataStore: última canción + posición
+│   │   │   │   │   ├── PlaylistRepository.kt       # Repositorio: playlists (Room)
+│   │   │   │   │   ├── UserPreferences.kt          # DataStore: última canción + posición
+│   │   │   │   │   └── db/
+│   │   │   │   │       ├── PlaylistEntities.kt     # Entidades Room de playlists
+│   │   │   │   │       ├── PlaylistDao.kt          # DAO de playlists
+│   │   │   │   │       └── UchihaDatabase.kt       # Base Room `uchiha-player.db`
 │   │   │   │   ├── ui/
 │   │   │   │   │   ├── components/
 │   │   │   │   │   │   └── AlbumArt.kt             # Carátula desde MediaStore (fallback Sharingan)
@@ -39,6 +44,8 @@ UchihaPlayer/
 │   │   │   │   │   │   └── Type.kt                 # Tipografía
 │   │   │   │   │   ├── MusicPlayerScreen.kt        # UI Compose: lista + buscador + seekbar
 │   │   │   │   │   ├── NowPlayingScreen.kt         # UI Compose: pantalla completa Now Playing
+│   │   │   │   │   ├── PlaylistsScreen.kt          # UI Compose: pestaña y detalle de playlists
+│   │   │   │   │   ├── TimeFormat.kt               # Formato mm:ss compartido por las seekbars
 │   │   │   │   │   └── MusicViewModel.kt           # ViewModel: cola real, shuffle/repeat, volumen
 │   │   │   │   ├── MainActivity.kt                 # Activity principal (entry point)
 │   │   │   │   └── MusicService.kt                 # Foreground Service + notificación Uchiha
