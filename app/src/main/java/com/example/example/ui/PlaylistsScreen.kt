@@ -54,6 +54,7 @@ import com.example.example.data.db.Playlist
 import com.example.example.ui.theme.SharinganRed
 import com.example.example.ui.theme.UchihaWhiteMuted
 import com.example.example.ui.theme.UchihaWhiteSecondary
+
 /**
  * Pestaña de playlists: lista las playlists del usuario (Room),
  * permite crear/borrar y abrir cada una para gestionarla.
@@ -92,7 +93,7 @@ fun PlaylistsTab(viewModel: MusicViewModel) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Crea una y agrupa tus temitas como un verdadero Uchiha.",
-                    color = Color.White.copy(alpha = 0.6f),
+                    color = UchihaWhiteMuted,
                     fontSize = 14.sp
                 )
             }
@@ -186,7 +187,7 @@ private fun PlaylistCard(
                 )
                 Text(
                     text = if (playlist.songCount == 1) "1 pista" else "${playlist.songCount} pistas",
-                    color = Color.White.copy(alpha = 0.6f),
+                    color = UchihaWhiteMuted,
                     fontSize = 13.sp
                 )
             }
@@ -243,7 +244,7 @@ private fun PlaylistDetailScreen(
                 )
                 Text(
                     text = if (entries.size == 1) "1 pista" else "${entries.size} pistas",
-                    color = Color.White.copy(alpha = 0.6f),
+                    color = UchihaWhiteMuted,
                     fontSize = 13.sp
                 )
             }
@@ -251,7 +252,7 @@ private fun PlaylistDetailScreen(
                 Icon(Icons.Default.PlayArrow, contentDescription = "Reproducir todo", tint = SharinganRed)
             }
             IconButton(onClick = { showDeleteConfirm = true }) {
-                Icon(Icons.Default.Delete, contentDescription = "Borrar playlist", tint = Color.White.copy(alpha = 0.7f))
+                Icon(Icons.Default.Delete, contentDescription = "Borrar playlist", tint = UchihaWhiteSecondary)
             }
         }
 
@@ -317,7 +318,7 @@ private fun PlaylistSongRow(
             )
             Text(
                 text = artist,
-                color = Color.White.copy(alpha = 0.6f),
+                color = UchihaWhiteMuted,
                 fontSize = 13.sp,
                 maxLines = 1
             )
@@ -367,7 +368,7 @@ private fun CreatePlaylistDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancelar", color = Color.White.copy(alpha = 0.7f))
+                Text("Cancelar", color = UchihaWhiteSecondary)
             }
         }
     )
@@ -387,7 +388,7 @@ private fun ConfirmDeletePlaylistDialog(
         text = {
             Text(
                 text = "¿Borrar \"$playlistName\"? Las canciones de tu biblioteca no se afectan.",
-                color = Color.White.copy(alpha = 0.7f)
+                color = UchihaWhiteSecondary
             )
         },
         confirmButton = {
@@ -397,7 +398,7 @@ private fun ConfirmDeletePlaylistDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancelar", color = Color.White.copy(alpha = 0.7f))
+                Text("Cancelar", color = UchihaWhiteSecondary)
             }
         }
     )
@@ -422,7 +423,7 @@ fun AddToPlaylistDialog(
             if (playlists.isEmpty()) {
                 Text(
                     text = "No tienes playlists todavía. Crea una en la pestaña Playlists.",
-                    color = Color.White.copy(alpha = 0.6f)
+                    color = UchihaWhiteMuted
                 )
             } else {
                 LazyColumn {
@@ -455,11 +456,11 @@ fun AddToPlaylistDialog(
                                 )
                                 Text(
                                     text = if (playlist.songCount == 1) "1 pista" else "${playlist.songCount} pistas",
-                                    color = Color.White.copy(alpha = 0.6f),
+                                    color = UchihaWhiteMuted,
                                     fontSize = 12.sp
                                 )
                             }
-                            Icon(Icons.Default.Add, contentDescription = null, tint = Color.White.copy(alpha = 0.6f))
+                            Icon(Icons.Default.Add, contentDescription = null, tint = UchihaWhiteMuted)
                         }
                     }
                 }
@@ -468,7 +469,7 @@ fun AddToPlaylistDialog(
         confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cerrar", color = Color.White.copy(alpha = 0.7f))
+                Text("Cerrar", color = UchihaWhiteSecondary)
             }
         }
     )
