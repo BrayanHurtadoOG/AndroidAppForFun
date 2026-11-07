@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -23,15 +24,15 @@ import com.example.example.R
 fun ExampleApp() {
     // Obtenemos el contexto actual de Android
     val context = LocalContext.current
+    val isPreview = LocalInspectionMode.current
 
-    // ViewModel con dependencias inyectadas por Hilt
-    // (reemplaza la Factory manual y los remember de repositorios).
-    val viewModel: MusicViewModel = hiltViewModel()
+    // ViewModel con dependencias inyectadas por Hilt (evita instanciar en vista previa)
+    val viewModel: MusicViewModel? = if (isPreview) null else hiltViewModel()
 
     // Estado que rastrea si el usuario concedió el permiso de audio
     var permissionGranted by remember {
         mutableStateOf(
-            ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED
+            isPreview || (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED)
         )
     }
 
@@ -45,17 +46,19 @@ fun ExampleApp() {
         permissionGranted = isGranted
         if (isGranted) {
             // Si se concede, cargamos las canciones inmediatamente
-            viewModel.loadSongs()
+            viewModel?.loadSongs()
         }
     }
 
     // Efecto que se ejecuta al iniciar la aplicación
     LaunchedEffect(Unit) {
-        // Inicializa el controlador de reproducción (ExoPlayer)
-        viewModel.initController()
-        // Si ya tenemos el permiso, cargamos la lista de canciones
-        if (permissionGranted) {
-            viewModel.loadSongs()
+        if (!isPreview && viewModel != null) {
+            // Inicializa el controlador de reproducción (ExoPlayer)
+            viewModel.initController()
+            // Si ya tenemos el permiso, cargamos la lista de canciones
+            if (permissionGranted) {
+                viewModel.loadSongs()
+            }
         }
     }
 
@@ -72,11 +75,21 @@ fun ExampleApp() {
 
         // 2. CONTENIDO PRINCIPAL (Se dibuja encima de la imagen)
         if (permissionGranted) {
-            // Si hay permisos, mostramos la pantalla del reproductor
-            MusicPlayerScreen(
-                viewModel = viewModel,
-                onOpenNowPlaying = { showNowPlaying = true }
-            )
+            if (viewModel != null) {
+                // Si hay permisos y viewModel, mostramos la pantalla del reproductor
+                MusicPlayerScreen(
+                    viewModel = viewModel,
+                    onOpenNowPlaying = { showNowPlaying = true }
+                )
+            } else {
+                // Modo Preview sin ViewModel
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Vista previa de Uchiha Player")
+                }
+            }
         } else {
             // Si no hay permisos, mostramos un botón centrado para pedirlos
             Box(
@@ -93,7 +106,7 @@ fun ExampleApp() {
         }
 
         // Pantalla completa de "Now Playing", superpuesta sobre el contenido principal
-        if (showNowPlaying) {
+        if (showNowPlaying && viewModel != null) {
             NowPlayingScreen(
                 viewModel = viewModel,
                 onClose = { showNowPlaying = false }
