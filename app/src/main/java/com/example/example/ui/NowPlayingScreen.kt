@@ -49,6 +49,8 @@ import androidx.media3.common.Player
 import com.example.example.R
 import com.example.example.ui.components.AlbumArt
 import com.example.example.ui.theme.SharinganRed
+import com.example.example.ui.theme.UchihaWhiteMuted
+import com.example.example.ui.theme.UchihaWhiteSecondary
 
 /**
  * Pantalla completa de "Now Playing" con estética Uchiha.
