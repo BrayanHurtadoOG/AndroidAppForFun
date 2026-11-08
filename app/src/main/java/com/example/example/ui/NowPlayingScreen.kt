@@ -48,6 +48,8 @@ import androidx.compose.ui.unit.dp
 import androidx.media3.common.Player
 import com.example.example.R
 import com.example.example.ui.components.AlbumArt
+import com.example.example.ui.theme.UchihaWhiteMuted
+import com.example.example.ui.theme.UchihaWhiteSecondary
 
 private val UchihaRed = Color(0xFFE53935)
 
@@ -121,7 +123,7 @@ fun NowPlayingScreen(
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = "Nada en reproducción",
-                    color = Color.White.copy(alpha = 0.7f),
+                    color = UchihaWhiteSecondary,
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center
                 )
@@ -187,12 +189,12 @@ fun NowPlayingScreen(
                 ) {
                     Text(
                         text = formatMs(if (isDragging) draggingValue.toLong() else positionMs),
-                        color = Color.White.copy(alpha = 0.6f),
+                        color = UchihaWhiteMuted,
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
                         text = formatMs(durationMs),
-                        color = Color.White.copy(alpha = 0.6f),
+                        color = UchihaWhiteMuted,
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -209,7 +211,7 @@ fun NowPlayingScreen(
                         Icon(
                             imageVector = Icons.Default.Shuffle,
                             contentDescription = "Aleatorio",
-                            tint = if (isShuffleEnabled) UchihaRed else Color.White.copy(alpha = 0.7f),
+                            tint = if (isShuffleEnabled) UchihaRed else UchihaWhiteSecondary,
                             modifier = Modifier.size(28.dp)
                         )
                     }
@@ -246,7 +248,7 @@ fun NowPlayingScreen(
                         Icon(
                             imageVector = if (repeatMode == Player.REPEAT_MODE_ONE) Icons.Default.RepeatOne else Icons.Default.Repeat,
                             contentDescription = "Repetir",
-                            tint = if (repeatMode != Player.REPEAT_MODE_OFF) UchihaRed else Color.White.copy(alpha = 0.7f),
+                            tint = if (repeatMode != Player.REPEAT_MODE_OFF) UchihaRed else UchihaWhiteSecondary,
                             modifier = Modifier.size(28.dp)
                         )
                     }
@@ -279,12 +281,4 @@ fun NowPlayingScreen(
             }
         }
     }
-}
-
-/** Formatea milisegundos como mm:ss. */
-private fun formatMs(ms: Long): String {
-    val totalSeconds = (ms / 1000).coerceAtLeast(0)
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return "%d:%02d".format(minutes, seconds)
 }

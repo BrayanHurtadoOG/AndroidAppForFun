@@ -68,6 +68,8 @@ import com.example.example.R
 import com.example.example.data.Song
 import com.example.example.ui.components.AlbumArt
 import com.example.example.ui.theme.SharinganRed
+import com.example.example.ui.theme.UchihaWhiteMuted
+import com.example.example.ui.theme.UchihaWhiteSecondary
 
 /**
  * Pantalla principal: pestañas Canciones / Playlists con la barra de reproducción.
@@ -157,7 +159,7 @@ fun MusicPlayerScreen(
                     text = {
                         Text(
                             "Canciones",
-                            color = if (selectedTab == 0) Color.White else Color.White.copy(alpha = 0.6f),
+                            color = if (selectedTab == 0) Color.White else UchihaWhiteMuted,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
@@ -168,7 +170,7 @@ fun MusicPlayerScreen(
                     text = {
                         Text(
                             "Playlists",
-                            color = if (selectedTab == 1) Color.White else Color.White.copy(alpha = 0.6f),
+                            color = if (selectedTab == 1) Color.White else UchihaWhiteMuted,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
@@ -348,7 +350,7 @@ fun PlaylistHeader(songs: List<Song>) {
         Text(
             text = "${songs.size} pistas",
             fontSize = 14.sp,
-            color = Color.White.copy(alpha = 0.7f)
+            color = UchihaWhiteSecondary
         )
     }
 }
@@ -369,11 +371,11 @@ fun ActionButtonsBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Icono de orden/filtros
-        Icon(Icons.Default.Menu, contentDescription = null, tint = Color.White.copy(alpha = 0.7f))
+        Icon(Icons.Default.Menu, contentDescription = null, tint = UchihaWhiteSecondary)
         Text(
             text = "Mi orden",
             modifier = Modifier.padding(start = 8.dp),
-            color = Color.White.copy(alpha = 0.7f),
+            color = UchihaWhiteSecondary,
             fontSize = 14.sp
         )
 
@@ -386,7 +388,7 @@ fun ActionButtonsBar(
                 else Icons.Default.Repeat,
                 contentDescription = null,
                 tint = if (repeatMode != Player.REPEAT_MODE_OFF) SharinganRed
-                else Color.White.copy(alpha = 0.7f)
+                else UchihaWhiteSecondary
             )
         }
 
@@ -396,7 +398,7 @@ fun ActionButtonsBar(
             Icon(
                 Icons.Default.Shuffle,
                 contentDescription = null,
-                tint = if (isShuffleEnabled) SharinganRed else Color.White.copy(alpha = 0.7f)
+                tint = if (isShuffleEnabled) SharinganRed else UchihaWhiteSecondary
             )
         }
 
@@ -464,7 +466,7 @@ fun SongItem(
             )
             Text(
                 text = song.artist,
-                color = Color.White.copy(alpha = 0.6f),
+                color = UchihaWhiteMuted,
                 fontSize = 13.sp,
                 maxLines = 1
             )
@@ -479,14 +481,6 @@ fun SongItem(
             )
         }
     }
-}
-
-/** Formatea milisegundos como mm:ss. */
-private fun formatMs(ms: Long): String {
-    val totalSeconds = (ms / 1000).coerceAtLeast(0)
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return "%d:%02d".format(minutes, seconds)
 }
 
 @Composable
@@ -544,12 +538,12 @@ fun PlaybackControls(
             ) {
                 Text(
                     text = formatMs(if (isDragging) dragPositionMs else positionMs),
-                    color = Color.White.copy(alpha = 0.7f),
+                    color = UchihaWhiteSecondary,
                     fontSize = 12.sp
                 )
                 Text(
                     text = formatMs(durationMs),
-                    color = Color.White.copy(alpha = 0.7f),
+                    color = UchihaWhiteSecondary,
                     fontSize = 12.sp
                 )
             }
@@ -587,7 +581,7 @@ fun PlaybackControls(
                             .weight(1f)
                     ) {
                         Text(text = song.title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1)
-                        Text(text = song.artist, color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp, maxLines = 1)
+                        Text(text = song.artist, color = UchihaWhiteSecondary, fontSize = 12.sp, maxLines = 1)
                     }
 
                     // Controles multimedia rápidos

@@ -1,10 +1,12 @@
 package com.example.example.data.db
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 
+/**
+ * Base de datos de playlists. El singleton lo gestiona Hilt
+ * (ver `di/AppModule.provideUchihaDatabase`); no usar constructores manuales.
+ */
 @Database(
     entities = [PlaylistEntity::class, PlaylistSongEntity::class],
     version = 1,
@@ -12,18 +14,4 @@ import androidx.room.RoomDatabase
 )
 abstract class UchihaDatabase : RoomDatabase() {
     abstract fun playlistDao(): PlaylistDao
-
-    companion object {
-        @Volatile
-        private var INSTANCE: UchihaDatabase? = null
-
-        fun get(context: Context): UchihaDatabase =
-            INSTANCE ?: synchronized(this) {
-                INSTANCE ?: Room.databaseBuilder(
-                    context.applicationContext,
-                    UchihaDatabase::class.java,
-                    "uchiha-player.db"
-                ).build().also { INSTANCE = it }
-            }
-    }
 }

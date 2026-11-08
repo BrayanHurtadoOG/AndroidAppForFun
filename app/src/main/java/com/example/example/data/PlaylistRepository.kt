@@ -5,13 +5,14 @@ import com.example.example.data.db.PlaylistDao
 import com.example.example.data.db.PlaylistEntity
 import com.example.example.data.db.PlaylistSongEntity
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 /**
  * Acceso a las playlists del usuario (Room).
  * Las canciones se identifican por su _ID de MediaStore para poder
  * reconstruir el Song real (con su Uri) al reproducir.
  */
-class PlaylistRepository(private val dao: PlaylistDao) {
+class PlaylistRepository @Inject constructor(private val dao: PlaylistDao) {
 
     val playlists: Flow<List<Playlist>> = dao.observePlaylists()
 

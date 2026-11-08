@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 /**
  * Última canción reproducida + posición, para poder continuar donde quedó.
@@ -15,7 +17,9 @@ data class LastPlayed(val songId: Long, val positionMs: Long)
 private val KEY_SONG_ID = longPreferencesKey("last_song_id")
 private val KEY_POSITION = longPreferencesKey("last_position_ms")
 
-class UserPreferences(private val context: Context) {
+class UserPreferences @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
 
     private val Context.dataStore by preferencesDataStore(name = "uchiha_player_prefs")
 

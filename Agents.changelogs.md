@@ -38,6 +38,7 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 6. Shinku hará correcciones en los archivos y configuraciones que no queden como espera; por ende, Kurama debe revisar la rama `Shinku-review`. (Corregido por Shinku)
 7. Cada vez que se haga un commit en la rama `Shinku-review`, Kurama actualizará el Agents.changelogs.md y luego cada agente trabajará en lo que haya que arreglar. (Corregido por Shinku)
 8. **Merges a `master`:** los hacen solo Shinku o Kurama. Kaguya trabaja en sus ramas y abre los PRs, pero no mezcla a `master` por su cuenta.
+9. **Errores de compilación en QA:** si un PR no compila, Shinku lo arregla con el agente de Android Studio y fusiona; avisa en una línea qué era el error. Los errores funcionales van como comentario en el issue y los arregla el agente dueño (el issue vuelve a `en-curso`).
 
 ## Plantilla de entrada
 
@@ -90,6 +91,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 - **Archivos:** `Agents.changelogs.md` (nuevo)
 - **Cambios:** creado este archivo con la división de tareas Kurama / Kaguya y las reglas de coordinación.
 - **Pendiente:** Shinku revisa en `master` y crea la rama `Shinku-review` con sus correcciones.
+
+### [2026-10-20] Kaguya — Migración de carátulas a Coil
+
+- **Rama:** `kaguya/coil-album-art`
+- **Estado:** en revisión
+- **Archivos:** `Agents.changelogs.md`, `gradle/libs.versions.toml`, `app/build.gradle.kts`, `app/src/main/java/com/example/example/ui/components/AlbumArt.kt`
+- **Cambios:** registro de tarea antes de tocar código. Alcance: sustituir la carga manual de miniaturas (`ContentResolver.loadThumbnail` + estado) por Coil 3 (`AsyncImage`) manteniendo la misma firma pública de `AlbumArt`, la caché y el fallback Sharingan. Sin cambios en las pantallas que lo usan ni en la capa de datos. Hecho: Coil 3.3.0 (`io.coil-kt.coil3:coil-compose`) en el catálogo, dependencia añadida, `AlbumArt` reescrito con `AsyncImage` + `ImageRequest` (crossfade, placeholder/error = fallback, sin petición si `albumId <= 0`). Sin miniatura fija de 256px: Coil ajusta al tamaño del composable. Llamadas existentes (`MusicPlayerScreen`, `NowPlayingScreen`) sin cambios.
+- **Pendiente:** Shinku compila y corre los tests; PR e integración vía Kurama.
 
 ### Historial previo (antes de existir este archivo)
 
