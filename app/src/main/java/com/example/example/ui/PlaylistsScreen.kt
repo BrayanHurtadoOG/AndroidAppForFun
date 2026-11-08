@@ -1,6 +1,5 @@
 package com.example.example.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,9 +56,14 @@ import com.example.example.ui.theme.UchihaDialog
 /**
  * Pestaña de playlists: lista las playlists del usuario (Room),
  * permite crear/borrar y abrir cada una para gestionarla.
+ * Si se pasa [onPlaylistClick], abrir una playlist navega a su detalle como
+ * ruta (lo usa el NavHost); si no, se abre el detalle en local como antes.
  */
 @Composable
-fun PlaylistsTab(viewModel: MusicViewModel) {
+fun PlaylistsTab(
+    viewModel: MusicViewModel,
+    onPlaylistClick: ((Playlist) -> Unit)? = null
+) {
     val playlists by viewModel.playlists.collectAsState()
     var showCreateDialog by remember { mutableStateOf(false) }
     var openPlaylist by remember { mutableStateOf<Playlist?>(null) }
@@ -92,7 +96,7 @@ fun PlaylistsTab(viewModel: MusicViewModel) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Crea una y agrupa tus temitas como un verdadero Uchiha.",
-                    color = Color.White.copy(alpha = 0.6f),
+                    color = UchihaWhiteMuted,
                     fontSize = 14.sp
                 )
             }
@@ -105,7 +109,13 @@ fun PlaylistsTab(viewModel: MusicViewModel) {
                 items(playlists, key = { it.id }) { playlist ->
                     PlaylistCard(
                         playlist = playlist,
-                        onClick = { openPlaylist = playlist },
+                        onClick = {
+                            if (onPlaylistClick != null) {
+                                onPlaylistClick(playlist)
+                            } else {
+                                openPlaylist = playlist
+                            }
+                        },
                         onPlay = { viewModel.playPlaylist(playlist.id) }
                     )
                 }
@@ -216,9 +226,13 @@ private fun PlaylistCard(
     }
 }
 
-/** Detalle de una playlist: sus canciones, reproducirla toda o borrarla. */
+/**
+ * Detalle de una playlist: sus canciones, reproducirla toda o borrarla.
+ * Es pública para que el NavHost la use como destino de la ruta de detalle;
+ * [onBack] lo resuelve el back stack (o el estado local si se usa sin navegación).
+ */
 @Composable
-private fun PlaylistDetailScreen(
+fun PlaylistDetailScreen(
     viewModel: MusicViewModel,
     playlist: Playlist,
     onBack: () -> Unit
@@ -255,7 +269,7 @@ private fun PlaylistDetailScreen(
                 Icon(Icons.Default.PlayArrow, contentDescription = "Reproducir todo", tint = SharinganRed)
             }
             IconButton(onClick = { showDeleteConfirm = true }) {
-                Icon(Icons.Default.Delete, contentDescription = "Borrar playlist", tint = Color.White.copy(alpha = 0.7f))
+                Icon(Icons.Default.Delete, contentDescription = "Borrar playlist", tint = UchihaWhiteSecondary)
             }
         }
 
@@ -321,7 +335,7 @@ private fun PlaylistSongRow(
             )
             Text(
                 text = artist,
-                color = Color.White.copy(alpha = 0.6f),
+                color = UchihaWhiteMuted,
                 fontSize = 13.sp,
                 maxLines = 1
             )
@@ -371,7 +385,7 @@ private fun CreatePlaylistDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancelar", color = Color.White.copy(alpha = 0.7f))
+                Text("Cancelar", color = UchihaWhiteSecondary)
             }
         }
     )
@@ -391,7 +405,7 @@ private fun ConfirmDeletePlaylistDialog(
         text = {
             Text(
                 text = "¿Borrar \"$playlistName\"? Las canciones de tu biblioteca no se afectan.",
-                color = Color.White.copy(alpha = 0.7f)
+                color = UchihaWhiteSecondary
             )
         },
         confirmButton = {
@@ -401,7 +415,7 @@ private fun ConfirmDeletePlaylistDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancelar", color = Color.White.copy(alpha = 0.7f))
+                Text("Cancelar", color = UchihaWhiteSecondary)
             }
         }
     )
@@ -426,7 +440,7 @@ fun AddToPlaylistDialog(
             if (playlists.isEmpty()) {
                 Text(
                     text = "No tienes playlists todavía. Crea una en la pestaña Playlists.",
-                    color = Color.White.copy(alpha = 0.6f)
+                    color = UchihaWhiteMuted
                 )
             } else {
                 LazyColumn {
@@ -463,7 +477,7 @@ fun AddToPlaylistDialog(
                                     fontSize = 12.sp
                                 )
                             }
-                            Icon(Icons.Default.Add, contentDescription = null, tint = Color.White.copy(alpha = 0.6f))
+                            Icon(Icons.Default.Add, contentDescription = null, tint = UchihaWhiteMuted)
                         }
                     }
                 }
@@ -472,7 +486,7 @@ fun AddToPlaylistDialog(
         confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cerrar", color = Color.White.copy(alpha = 0.7f))
+                Text("Cerrar", color = UchihaWhiteSecondary)
             }
         }
     )
