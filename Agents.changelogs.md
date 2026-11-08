@@ -38,6 +38,7 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 6. Shinku hará correcciones en los archivos y configuraciones que no queden como espera; por ende, Kurama debe revisar la rama `Shinku-review`. (Corregido por Shinku)
 7. Cada vez que se haga un commit en la rama `Shinku-review`, Kurama actualizará el Agents.changelogs.md y luego cada agente trabajará en lo que haya que arreglar. (Corregido por Shinku)
 8. **Merges a `master`:** los hacen solo Shinku o Kurama. Kaguya trabaja en sus ramas y abre los PRs, pero no mezcla a `master` por su cuenta.
+9. **Errores de compilación en QA:** si un PR no compila, Shinku lo arregla con el agente de Android Studio y fusiona; avisa en una línea qué era el error. Los errores funcionales van como comentario en el issue y los arregla el agente dueño (el issue vuelve a `en-curso`).
 
 ## Plantilla de entrada
 
@@ -53,11 +54,19 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ### [2026-11-05] Kaguya — Pulido: eliminar SharinganRed duplicado (turno sin veredicto)
 
-- **Rama:** `kaguya/polish-2026-11-05`
+- **Rama:** `kaguya/polish-2026-11-07`
 - **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
-- **Archivos:** `app/src/main/java/com/example/example/ui/theme/Uchiha.kt` (eliminado), `app/src/main/java/com/example/example/ui/theme/Color.kt`, `Agents.changelogs.md`
-- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el QA de Hilt (issue #7, PR #6) ni sobre Coil (issue #8), no se toman tareas nuevas). `SharinganRed` estaba declarado dos veces en el mismo paquete `ui.theme` — en `Color.kt` y en `Uchiha.kt` — con el mismo valor (`0xFFE53935`); en Kotlin dos declaraciones top-level con el mismo nombre en el mismo paquete son declaraciones en conflicto, y `Uchiha.kt` solo contenía esa declaración, así que se elimina el archivo y su comentario pasa a `Color.kt`. Ningún uso cambia: todos los archivos importan `SharinganRed` del paquete y el valor es idéntico.
-- **Pendiente:** Shinku sincroniza y compila en Android Studio para confirmar que el error de declaración en conflicto desaparece (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: las ramas abiertas PR #6 (Hilt), PR #13 (Navigation) y `kaguya/coil-album-art` parten de `master` con el duplicado, así que al fusionar esto deberán rebasar.
+- **Archivos:** `app/src/main/java/com/example/example/ui/theme/Color.kt`, `app/src/main/java/com/example/example/ui/MusicPlayerScreen.kt`, `app/src/main/java/com/example/example/ui/NowPlayingScreen.kt`, `app/src/main/java/com/example/example/ui/PlaylistsScreen.kt`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre Navigation (issue #9, PR #13) ni sobre Coil (issue #8, con error de compilación KSP pendiente que él está arreglando); ningún issue [Kaguya] en `listo`; WIP en-revision: 1 (#9)). Dos dedups de literales en la UI, sin cambio visual: `Color.White.copy(alpha = 0.7f)` (×16 en las 3 pantallas) pasa a `UchihaWhiteSecondary` y `Color.White.copy(alpha = 0.6f)` (×12) a `UchihaWhiteMuted`, ambos definidos en `theme/Color.kt`. No se toca el catálogo de versiones ni las ramas `kaguya/coil-album-art` / `kaguya/navigation` (su KSP `2.2.10-1.0.31` no resuelve; master ya usa `2.2.10-2.0.2`).
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual. Al fusionar, el PR #17 toca las mismas expresiones de `NowPlayingScreen.kt` (`tint = if (isShuffleEnabled) UchihaRed else …` y `tint = if (repeatMode …) UchihaRed else …`): resolver aplicando ambas sustituciones.
+
+### [2026-11-06] Kurama — Regla QA: errores de compilación los arregla Shinku
+
+- **Rama:** `kurama/qa-compile-fix`
+- **Estado:** en revisión (PR abierto)
+- **Archivos:** `Agents.coordination.md`, `Agents.changelogs.md`
+- **Cambios:** regla acordada con Shinku el 2026-11-06 tras el QA de Hilt (PR #6 no compilaba: `ExampleApp` invocaba `hiltViewModel()` en el Preview de Compose y el preview no puede instanciar el ViewModel sin constructor sin argumentos; lo arregló él con el agente de Android Studio y fusionó): si un PR no compila, Shinku lo arregla y fusiona, y avisa en una línea qué era el error; los errores funcionales van como comentario en el issue y los arregla el agente dueño. Aplica igual a los PRs de Kaguya.
+- **Pendiente:** Shinku revisa y fusiona; Kaguya lee la regla nueva.
 
 ### [2026-11-04] Kurama — Flujo de sprints (coordinación)
 
