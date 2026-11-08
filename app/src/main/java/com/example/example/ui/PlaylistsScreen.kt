@@ -51,8 +51,7 @@ import androidx.compose.ui.unit.sp
 import com.example.example.data.Song
 import com.example.example.data.db.Playlist
 import com.example.example.ui.theme.SharinganRed
-import com.example.example.ui.theme.UchihaWhiteMuted
-import com.example.example.ui.theme.UchihaWhiteSecondary
+import com.example.example.ui.theme.UchihaDialog
 
 /**
  * Pestaña de playlists: lista las playlists del usuario (Room),
@@ -147,6 +146,10 @@ fun PlaylistsTab(
     }
 }
 
+/** Texto «1 pista» / «N pistas» para el contador de una playlist. */
+private fun trackCountText(count: Int): String =
+    if (count == 1) "1 pista" else "$count pistas"
+
 @Composable
 private fun PlaylistCard(
     playlist: Playlist,
@@ -196,8 +199,8 @@ private fun PlaylistCard(
                     maxLines = 1
                 )
                 Text(
-                    text = if (playlist.songCount == 1) "1 pista" else "${playlist.songCount} pistas",
-                    color = UchihaWhiteMuted,
+                    text = trackCountText(playlist.songCount),
+                    color = Color.White.copy(alpha = 0.6f),
                     fontSize = 13.sp
                 )
             }
@@ -257,8 +260,8 @@ fun PlaylistDetailScreen(
                     maxLines = 1
                 )
                 Text(
-                    text = if (entries.size == 1) "1 pista" else "${entries.size} pistas",
-                    color = UchihaWhiteMuted,
+                    text = trackCountText(entries.size),
+                    color = Color.White.copy(alpha = 0.6f),
                     fontSize = 13.sp
                 )
             }
@@ -357,7 +360,7 @@ private fun CreatePlaylistDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = Color(0xFF1C1C1E),
+        containerColor = UchihaDialog,
         title = { Text("Nueva playlist", color = Color.White, fontWeight = FontWeight.Bold) },
         text = {
             OutlinedTextField(
@@ -397,7 +400,7 @@ private fun ConfirmDeletePlaylistDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = Color(0xFF1C1C1E),
+        containerColor = UchihaDialog,
         title = { Text("Borrar playlist", color = Color.White, fontWeight = FontWeight.Bold) },
         text = {
             Text(
@@ -431,7 +434,7 @@ fun AddToPlaylistDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = Color(0xFF1C1C1E),
+        containerColor = UchihaDialog,
         title = { Text("Añadir a playlist", color = Color.White, fontWeight = FontWeight.Bold) },
         text = {
             if (playlists.isEmpty()) {
@@ -469,8 +472,8 @@ fun AddToPlaylistDialog(
                                     maxLines = 1
                                 )
                                 Text(
-                                    text = if (playlist.songCount == 1) "1 pista" else "${playlist.songCount} pistas",
-                                    color = UchihaWhiteMuted,
+                                    text = trackCountText(playlist.songCount),
+                                    color = Color.White.copy(alpha = 0.6f),
                                     fontSize = 12.sp
                                 )
                             }
