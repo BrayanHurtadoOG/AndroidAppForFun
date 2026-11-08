@@ -45,7 +45,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.tabIndicatorOffset
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -67,9 +67,26 @@ import com.example.example.R
 import com.example.example.data.Song
 import com.example.example.ui.components.AlbumArt
 import com.example.example.ui.theme.SharinganRed
+import com.example.example.ui.theme.UchihaWhiteMuted
+import com.example.example.ui.theme.UchihaWhiteSecondary
 
+/**
+ * Pantalla principal: pestañas Canciones / Playlists con la barra de reproducción.
+ *
+ * La pestaña activa la decide el destino de navegación que la muestra
+ * ([initialTab]); al tocar una pestaña se avisa con [onTabSelected] para que el
+ * NavHost cambie de destino, y al tocar una playlist se avisa con
+ * [onPlaylistClick] para abrir su detalle como ruta. Los valores por defecto
+ * mantienen el comportamiento anterior sin navegación (útil en previews).
+ */
 @Composable
-fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = {}) {
+fun MusicPlayerScreen(
+    viewModel: MusicViewModel,
+    onOpenNowPlaying: () -> Unit = {},
+    initialTab: Int = 0,
+    onTabSelected: (Int) -> Unit = {},
+    onPlaylistClick: ((com.example.example.data.db.Playlist) -> Unit)? = null
+) {
     // Observamos los datos del ViewModel: lista de canciones, actual y estado de reproducción
     val songs by viewModel.songs.collectAsState()
     val currentSong by viewModel.currentSong
@@ -92,8 +109,9 @@ fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = 
         }
     }
 
-    // Pestaña activa: 0 = Canciones, 1 = Playlists (Room)
-    var selectedTab by remember { mutableIntStateOf(0) }
+    // Pestaña activa: 0 = Canciones, 1 = Playlists (Room). La decide el destino
+    // de navegación (initialTab); al tocar otra pestaña se avisa al NavHost.
+    var selectedTab by remember { mutableIntStateOf(initialTab) }
     // Canción para la que se abrió el diálogo "Añadir a playlist"
     var addTarget by remember { mutableStateOf<Song?>(null) }
 
@@ -136,22 +154,22 @@ fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = 
             ) {
                 Tab(
                     selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 },
+                    onClick = { selectedTab = 0; onTabSelected(0) },
                     text = {
                         Text(
                             "Canciones",
-                            color = if (selectedTab == 0) Color.White else Color.White.copy(alpha = 0.6f),
+                            color = if (selectedTab == 0) Color.White else UchihaWhiteMuted,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
                 )
                 Tab(
                     selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
+                    onClick = { selectedTab = 1; onTabSelected(1) },
                     text = {
                         Text(
                             "Playlists",
-                            color = if (selectedTab == 1) Color.White else Color.White.copy(alpha = 0.6f),
+                            color = if (selectedTab == 1) Color.White else UchihaWhiteMuted,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
@@ -181,7 +199,10 @@ fun MusicPlayerScreen(viewModel: MusicViewModel, onOpenNowPlaying: () -> Unit = 
                     }
                 )
             } else {
-                PlaylistsTab(viewModel = viewModel)
+                PlaylistsTab(
+                    viewModel = viewModel,
+                    onPlaylistClick = onPlaylistClick
+                )
             }
         }
     }
@@ -328,7 +349,7 @@ fun PlaylistHeader(songs: List<Song>) {
         Text(
             text = "${songs.size} pistas",
             fontSize = 14.sp,
-            color = Color.White.copy(alpha = 0.7f)
+            color = UchihaWhiteSecondary
         )
     }
 }
@@ -349,11 +370,11 @@ fun ActionButtonsBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Icono de orden/filtros
-        Icon(Icons.Default.Menu, contentDescription = null, tint = Color.White.copy(alpha = 0.7f))
+        Icon(Icons.Default.Menu, contentDescription = null, tint = UchihaWhiteSecondary)
         Text(
             text = "Mi orden",
             modifier = Modifier.padding(start = 8.dp),
-            color = Color.White.copy(alpha = 0.7f),
+            color = UchihaWhiteSecondary,
             fontSize = 14.sp
         )
 
@@ -366,7 +387,7 @@ fun ActionButtonsBar(
                 else Icons.Default.Repeat,
                 contentDescription = null,
                 tint = if (repeatMode != Player.REPEAT_MODE_OFF) SharinganRed
-                else Color.White.copy(alpha = 0.7f)
+                else UchihaWhiteSecondary
             )
         }
 
@@ -376,7 +397,7 @@ fun ActionButtonsBar(
             Icon(
                 Icons.Default.Shuffle,
                 contentDescription = null,
-                tint = if (isShuffleEnabled) SharinganRed else Color.White.copy(alpha = 0.7f)
+                tint = if (isShuffleEnabled) SharinganRed else UchihaWhiteSecondary
             )
         }
 
@@ -444,7 +465,7 @@ fun SongItem(
             )
             Text(
                 text = song.artist,
-                color = Color.White.copy(alpha = 0.6f),
+                color = UchihaWhiteMuted,
                 fontSize = 13.sp,
                 maxLines = 1
             )
@@ -459,14 +480,6 @@ fun SongItem(
             )
         }
     }
-}
-
-/** Formatea milisegundos como mm:ss. */
-private fun formatMs(ms: Long): String {
-    val totalSeconds = (ms / 1000).coerceAtLeast(0)
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return "%d:%02d".format(minutes, seconds)
 }
 
 @Composable
@@ -524,12 +537,12 @@ fun PlaybackControls(
             ) {
                 Text(
                     text = formatMs(if (isDragging) dragPositionMs else positionMs),
-                    color = Color.White.copy(alpha = 0.7f),
+                    color = UchihaWhiteSecondary,
                     fontSize = 12.sp
                 )
                 Text(
                     text = formatMs(durationMs),
-                    color = Color.White.copy(alpha = 0.7f),
+                    color = UchihaWhiteSecondary,
                     fontSize = 12.sp
                 )
             }
@@ -567,7 +580,7 @@ fun PlaybackControls(
                             .weight(1f)
                     ) {
                         Text(text = song.title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1)
-                        Text(text = song.artist, color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp, maxLines = 1)
+                        Text(text = song.artist, color = UchihaWhiteSecondary, fontSize = 12.sp, maxLines = 1)
                     }
 
                     // Controles multimedia rápidos

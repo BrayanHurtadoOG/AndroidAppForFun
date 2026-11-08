@@ -24,6 +24,8 @@ import com.example.example.data.db.PlaylistSongEntity
 import kotlinx.coroutines.flow.Flow
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,10 +33,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MusicViewModel(
+@HiltViewModel
+class MusicViewModel @Inject constructor(
     private val repository: MediaRepository,
-    private val playlistRepository: PlaylistRepository
+    private val playlistRepository: PlaylistRepository,
+    private val userPreferences: UserPreferences,
+    @ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
     private val _songs = MutableStateFlow<List<Song>>(emptyList())
@@ -76,8 +82,6 @@ class MusicViewModel(
     private val _durationMs = mutableStateOf(0L)
     val durationMs: State<Long> = _durationMs
 
-    private var appContext: Context? = null
-    private var prefs: UserPreferences? = null
     private var controllerFuture: ListenableFuture<MediaController>? = null
     private var controller: MediaController? = null
     private var progressJob: Job? = null
@@ -99,12 +103,13 @@ class MusicViewModel(
         tryRestoreLastPlayed()
     }
 
-    fun initController(context: Context) {
-        val appCtx = context.applicationContext
-        appContext = appCtx
-        prefs = UserPreferences(appCtx)
-        val sessionToken = SessionToken(context, ComponentName(context, MusicService::class.java))
-        controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
+    /**
+     * Conecta el MediaController con el MusicService. El contexto de la app
+     * ya viene inyectado por Hilt, así que no necesita parámetros.
+     */
+    fun initController() {
+        val sessionToken = SessionToken(appContext, ComponentName(appContext, MusicService::class.java))
+        controllerFuture = MediaController.Builder(appContext, sessionToken).buildAsync()
         controllerFuture?.addListener({
             controller = controllerFuture?.get()
             // Aplica el volumen guardado al conectar
@@ -154,11 +159,10 @@ class MusicViewModel(
         val ctrl = controller ?: return
         val songList = _songs.value
         if (songList.isEmpty()) return
-        val p = prefs ?: return
         restoreAttempted = true
         viewModelScope.launch {
             val last = try {
-                p.lastPlayed.firstOrNull()
+                userPreferences.lastPlayed.firstOrNull()
             } catch (e: Exception) {
                 null
             } ?: return@launch
@@ -176,11 +180,10 @@ class MusicViewModel(
     /** Guarda la canción actual + posición en DataStore (best effort). */
     private fun saveProgress() {
         val song = _currentSong.value ?: return
-        val p = prefs ?: return
         val pos = controller?.currentPosition ?: 0L
         viewModelScope.launch {
             try {
-                p.saveLastPlayed(song.id, pos)
+                userPreferences.saveLastPlayed(song.id, pos)
             } catch (e: Exception) {
                 // Best effort: un fallo de persistencia no debe interrumpir la reproducción.
             }
@@ -247,7 +250,7 @@ class MusicViewModel(
 
     /** Fallback de artwork (notificación/media): el abanico del clan Uchiha. */
     private fun artworkFallbackUri(): Uri {
-        val pkg = appContext?.packageName ?: "com.example.example"
+        val pkg = appContext.packageName
         return Uri.parse("android.resource://$pkg/${R.drawable.ic_uchiha_fan}")
     }
 

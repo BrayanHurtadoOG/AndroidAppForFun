@@ -4,6 +4,8 @@ import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
 data class Song(
     val id: Long,
@@ -14,7 +16,9 @@ data class Song(
     val albumId: Long
 )
 
-class MediaRepository(private val context: Context) {
+class MediaRepository @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
     fun fetchLocalSongs(): List<Song> {
         val songList = mutableListOf<Song>()
         val projection = arrayOf(
