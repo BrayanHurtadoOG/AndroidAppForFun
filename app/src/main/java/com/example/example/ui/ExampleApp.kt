@@ -75,12 +75,12 @@ fun ExampleApp() {
         )
 
         // 2. CONTENIDO PRINCIPAL (Se dibuja encima de la imagen)
-        if (permissionGranted) {
+        if (permissionGranted && viewModel != null) {
             // Si hay permisos, mostramos el grafo de navegación: la navegación
             // por estado (showNowPlaying, pestaña, playlist abierta) ahora la
             // resuelve Navigation Compose con su back stack.
             UchihaNavHost(viewModel = viewModel)
-        } else {
+        } else if (!permissionGranted) {
             // Si no hay permisos, mostramos un botón centrado para pedirlos
             Box(
                 modifier = Modifier.fillMaxSize(),
