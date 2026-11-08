@@ -52,21 +52,13 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
-### [2026-11-07] Kaguya — Pulido: blancos con alfa del tema (0.7 / 0.6)
+### [2026-11-04] Kaguya — Migración a Navigation Compose (issue #9)
 
-- **Rama:** `kaguya/polish-2026-11-07`
+- **Rama:** `kaguya/navigation`
 - **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
-- **Archivos:** `app/src/main/java/com/example/example/ui/theme/Color.kt`, `app/src/main/java/com/example/example/ui/MusicPlayerScreen.kt`, `app/src/main/java/com/example/example/ui/NowPlayingScreen.kt`, `app/src/main/java/com/example/example/ui/PlaylistsScreen.kt`, `Agents.changelogs.md`
-- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre Navigation (issue #9, PR #13) ni sobre Coil (issue #8, con error de compilación KSP pendiente que él está arreglando); ningún issue [Kaguya] en `listo`; WIP en-revision: 1 (#9)). Dos dedups de literales en la UI, sin cambio visual: `Color.White.copy(alpha = 0.7f)` (×16 en las 3 pantallas) pasa a `UchihaWhiteSecondary` y `Color.White.copy(alpha = 0.6f)` (×12) a `UchihaWhiteMuted`, ambos definidos en `theme/Color.kt`. No se toca el catálogo de versiones ni las ramas `kaguya/coil-album-art` / `kaguya/navigation` (su KSP `2.2.10-1.0.31` no resuelve; master ya usa `2.2.10-2.0.2`).
-- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual. Al fusionar, el PR #17 toca las mismas expresiones de `NowPlayingScreen.kt` (`tint = if (isShuffleEnabled) UchihaRed else …` y `tint = if (repeatMode …) UchihaRed else …`): resolver aplicando ambas sustituciones.
-
-### [2026-11-06] Kurama — Regla QA: errores de compilación los arregla Shinku
-
-- **Rama:** `kurama/qa-compile-fix`
-- **Estado:** en revisión (PR abierto)
-- **Archivos:** `Agents.coordination.md`, `Agents.changelogs.md`
-- **Cambios:** regla acordada con Shinku el 2026-11-06 tras el QA de Hilt (PR #6 no compilaba: `ExampleApp` invocaba `hiltViewModel()` en el Preview de Compose y el preview no puede instanciar el ViewModel sin constructor sin argumentos; lo arregló él con el agente de Android Studio y fusionó): si un PR no compila, Shinku lo arregla y fusiona, y avisa en una línea qué era el error; los errores funcionales van como comentario en el issue y los arregla el agente dueño. Aplica igual a los PRs de Kaguya.
-- **Pendiente:** Shinku revisa y fusiona; Kaguya lee la regla nueva.
+- **Archivos:** `gradle/libs.versions.toml`, `app/build.gradle.kts`, `app/src/main/java/com/example/example/ui/navigation/UchihaNavHost.kt` (nuevo), `app/src/main/java/com/example/example/ui/ExampleApp.kt`, `app/src/main/java/com/example/example/ui/MusicPlayerScreen.kt`, `app/src/main/java/com/example/example/ui/PlaylistsScreen.kt`, `Agents.changelogs.md`
+- **Cambios:** migración a Navigation Compose 2.9.0 del Sprint 1 (issue #9): `UchihaNavHost` con rutas `songs`, `playlists`, `playlist_detail/{playlistId}` y `now_playing`; `ExampleApp.kt` deja de navegar por estado (`showNowPlaying` eliminado) y muestra el NavHost; las pestañas Canciones/Playlists son destinos (con `launchSingleTop` + estado guardado) y el detalle de playlist es ruta con argumento `playlistId` (si la playlist ya no existe muestra «Playlist no encontrada» en vez de crashear); el botón atrás lo resuelve el back stack. Sin tocar `data/`, `di/` ni `MusicViewModel`; `PlaylistDetailScreen` pasa de privada a pública solo para usarla como destino.
+- **Pendiente:** Shinku sincroniza y compila en Android Studio, navega entre pantallas y prueba el botón atrás (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: la rama parte de `master` sin la migración a Hilt (PR #6 sin fusionar) ni Coil (rama pendiente de QA); al fusionar Hilt habrá que adaptar `ExampleApp.kt` a `hiltViewModel()`.
 
 ### [2026-11-04] Kurama — Flujo de sprints (coordinación)
 

@@ -19,6 +19,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.example.R
+import com.example.example.data.MediaRepository
+import com.example.example.data.PlaylistRepository
+import com.example.example.data.db.UchihaDatabase
+import com.example.example.ui.navigation.UchihaNavHost
 
 @Composable
 fun ExampleApp() {
@@ -35,9 +39,6 @@ fun ExampleApp() {
             isPreview || (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED)
         )
     }
-
-    // Estado que controla si se muestra la pantalla completa de "Now Playing"
-    var showNowPlaying by remember { mutableStateOf(false) }
 
     // Configuramos el lanzador para pedir permisos al sistema
     val launcher = rememberLauncherForActivityResult(
@@ -75,21 +76,10 @@ fun ExampleApp() {
 
         // 2. CONTENIDO PRINCIPAL (Se dibuja encima de la imagen)
         if (permissionGranted) {
-            if (viewModel != null) {
-                // Si hay permisos y viewModel, mostramos la pantalla del reproductor
-                MusicPlayerScreen(
-                    viewModel = viewModel,
-                    onOpenNowPlaying = { showNowPlaying = true }
-                )
-            } else {
-                // Modo Preview sin ViewModel
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("Vista previa de Uchiha Player")
-                }
-            }
+            // Si hay permisos, mostramos el grafo de navegación: la navegación
+            // por estado (showNowPlaying, pestaña, playlist abierta) ahora la
+            // resuelve Navigation Compose con su back stack.
+            UchihaNavHost(viewModel = viewModel)
         } else {
             // Si no hay permisos, mostramos un botón centrado para pedirlos
             Box(
@@ -103,14 +93,6 @@ fun ExampleApp() {
                     Text("Conceder Permiso para Música")
                 }
             }
-        }
-
-        // Pantalla completa de "Now Playing", superpuesta sobre el contenido principal
-        if (showNowPlaying && viewModel != null) {
-            NowPlayingScreen(
-                viewModel = viewModel,
-                onClose = { showNowPlaying = false }
-            )
         }
     }
 }
