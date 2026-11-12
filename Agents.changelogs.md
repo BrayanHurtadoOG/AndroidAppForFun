@@ -51,6 +51,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-12] Kaguya — Quitar el slider de volumen de Now Playing (issue #21)
+
+- **Rama:** `kaguya/remove-volume-slider`
+- **Estado:** en curso (implementado en la rama; pendiente abrir PR)
+- **Archivos:** `app/src/main/java/com/example/example/ui/NowPlayingScreen.kt`, `Agents.changelogs.md`
+- **Cambios:** issue #21, adelantado a petición de Shinku el 2026-11-12 (el Sprint 2 sigue sin abrirse: el issue sigue en `backlog` en su cuerpo y el tablero sigue en Sprint 1). Quitada la fila de volumen de Now Playing (icono `VolumeUp` + `Slider` con `viewModel::setVolume`), el import de `VolumeUp` y la lectura local `val volume by viewModel.volume` (su único uso era el slider). No se toca el slider de progreso de esa pantalla ni el mini-player de `MusicPlayerScreen.kt`; tampoco `MusicViewModel.kt` (su `volume`/`setVolume` queda sin uso, seguimiento aparte de Kurama según el issue).
+- **Pendiente:** abrir PR contra `master` (regla 8: no fusionar). Shinku compila en Android Studio y confirma que Now Playing ya no muestra volumen y que progreso, tiempos y controles siguen igual.
+
 ### [2026-11-06] Kaguya — Pulido: unificar literales duplicados en UI (turno sin veredicto)
 
 - **Rama:** `kaguya/polish-2026-11-06`
