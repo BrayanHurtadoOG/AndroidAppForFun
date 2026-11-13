@@ -210,7 +210,7 @@ fun NowPlayingScreen(
                         Icon(
                             imageVector = Icons.Default.Shuffle,
                             contentDescription = "Aleatorio",
-                            tint = if (isShuffleEnabled) SharinganRed else Color.White.copy(alpha = 0.7f),
+                            tint = if (isShuffleEnabled) SharinganRed else UchihaWhiteSecondary,
                             modifier = Modifier.size(28.dp)
                         )
                     }
@@ -247,7 +247,7 @@ fun NowPlayingScreen(
                         Icon(
                             imageVector = if (repeatMode == Player.REPEAT_MODE_ONE) Icons.Default.RepeatOne else Icons.Default.Repeat,
                             contentDescription = "Repetir",
-                            tint = if (repeatMode != Player.REPEAT_MODE_OFF) SharinganRed else Color.White.copy(alpha = 0.7f),
+                            tint = if (repeatMode != Player.REPEAT_MODE_OFF) SharinganRed else UchihaWhiteSecondary,
                             modifier = Modifier.size(28.dp)
                         )
                     }

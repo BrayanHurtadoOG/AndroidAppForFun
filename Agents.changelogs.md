@@ -51,6 +51,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-13] Kaguya — Pulido: unificar blancos con alfa repetidos en UI (turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-13`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/NowPlayingScreen.kt`, `app/src/main/java/com/example/example/ui/MusicPlayerScreen.kt`, `app/src/main/java/com/example/example/ui/PlaylistsScreen.kt`, `app/src/main/java/com/example/example/ui/theme/Color.kt`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21, quitar el slider de volumen), no se toman tareas nuevas; el issue #22 sigue en `backlog` y depende de que se fusione la #21). Tres dedups de blancos con alfa en la UI, sin cambio de comportamiento: (1) `NowPlayingScreen.kt` usaba `Color.White.copy(alpha = 0.7f)` en los tintes inactivos de aleatorio y repetir — ahora usa `UchihaWhiteSecondary` (2 usos), como ya hacía `ActionButtonsBar`; (2) `Color.White.copy(alpha = 0.5f)` estaba repetido 3 veces (placeholder del buscador y ⋮ de canción en `MusicPlayerScreen.kt`, ✕ de quitar en `PlaylistsScreen.kt`) — ahora es `UchihaWhiteFaint` en `Color.kt`; (3) `Color.White.copy(alpha = 0.6f)` estaba repetido 3 veces en los contadores «N pistas» de `PlaylistsScreen.kt` — ahora es `UchihaWhiteMuted`. No se toca la fila de volumen de `NowPlayingScreen.kt` (eso es el PR #23) ni el mini-player.
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí).
+
 ### [2026-11-06] Kaguya — Pulido: unificar literales duplicados en UI (turno sin veredicto)
 
 - **Rama:** `kaguya/polish-2026-11-06`
