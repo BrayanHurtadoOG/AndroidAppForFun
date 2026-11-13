@@ -67,6 +67,7 @@ import com.example.example.R
 import com.example.example.data.Song
 import com.example.example.ui.components.AlbumArt
 import com.example.example.ui.theme.SharinganRed
+import com.example.example.ui.theme.UchihaWhiteFaint
 import com.example.example.ui.theme.UchihaWhiteMuted
 import com.example.example.ui.theme.UchihaWhiteSecondary
 
@@ -266,7 +267,7 @@ private fun SongsListContent(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     placeholder = {
-                        Text("Buscar canciones...", color = Color.White.copy(alpha = 0.5f))
+                        Text("Buscar canciones...", color = UchihaWhiteFaint)
                     },
                     singleLine = true,
                     shape = RoundedCornerShape(24.dp),
@@ -476,7 +477,7 @@ fun SongItem(
             Icon(
                 Icons.Default.MoreVert,
                 contentDescription = "Opciones",
-                tint = Color.White.copy(alpha = 0.5f)
+                tint = UchihaWhiteFaint
             )
         }
     }

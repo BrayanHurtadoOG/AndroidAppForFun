@@ -14,3 +14,4 @@ val UchihaWhite = Color(0xFFF5F5F5)
 // Blancos con alfa para texto secundario e iconos (antes `Color.White.copy(alpha = …)` repetido en las pantallas).
 val UchihaWhiteSecondary = Color.White.copy(alpha = 0.7f)
 val UchihaWhiteMuted = Color.White.copy(alpha = 0.6f)
+val UchihaWhiteFaint = Color.White.copy(alpha = 0.5f)
