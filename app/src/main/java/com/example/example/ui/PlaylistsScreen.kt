@@ -52,6 +52,7 @@ import com.example.example.data.Song
 import com.example.example.data.db.Playlist
 import com.example.example.ui.theme.SharinganRed
 import com.example.example.ui.theme.UchihaDialog
+import com.example.example.ui.theme.UchihaWhiteDim
 import com.example.example.ui.theme.UchihaWhiteMuted
 import com.example.example.ui.theme.UchihaWhiteSecondary
 
@@ -306,7 +307,6 @@ fun PlaylistDetailScreen(
             onDismiss = { showDeleteConfirm = false },
             onConfirm = {
                 viewModel.deletePlaylist(playlist.id)
-                showDeleteConfirm = false
                 onBack()
             }
         )
@@ -376,7 +376,7 @@ private fun CreatePlaylistDialog(
                     unfocusedTextColor = Color.White,
                     cursorColor = SharinganRed,
                     focusedBorderColor = SharinganRed,
-                    unfocusedBorderColor = Color.White.copy(alpha = 0.3f)
+                    unfocusedBorderColor = UchihaWhiteDim
                 )
             )
         },

@@ -51,6 +51,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-14] Kaguya — Pulido: unificar blanco con alfa 0.3f repetido en UI (turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-14`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/theme/Color.kt`, `app/src/main/java/com/example/example/ui/MusicPlayerScreen.kt`, `app/src/main/java/com/example/example/ui/PlaylistsScreen.kt`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21, quitar el slider de volumen) ni sobre el PR #24 de pulido, no se toman tareas nuevas; la #22 sigue en `backlog` bloqueada por la #21). Un dedup de literales en la UI, sin cambio de comportamiento: `Color.White.copy(alpha = 0.3f)` estaba repetido 3 veces — borde sin foco del buscador y pista inactiva del slider del mini-player en `MusicPlayerScreen.kt`, borde sin foco del diálogo de crear playlist en `PlaylistsScreen.kt` — ahora es `UchihaWhiteDim` en `Color.kt`. No se tocan la fila de volumen de `NowPlayingScreen.kt` (eso es el PR #23) ni los literales 0.5f/0.6f/0.7f que ya unifica el PR #24.
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: el PR #24 abierto toca los mismos archivos (`Color.kt`, `MusicPlayerScreen.kt`, `PlaylistsScreen.kt`, `Agents.changelogs.md`); al fusionar puede haber conflicto en `Color.kt` y en el changelog por insertar en el mismo sitio — se resuelve rebasando.
+
 ### [2026-11-06] Kaguya — Pulido: unificar literales duplicados en UI (turno sin veredicto)
 
 - **Rama:** `kaguya/polish-2026-11-06`
