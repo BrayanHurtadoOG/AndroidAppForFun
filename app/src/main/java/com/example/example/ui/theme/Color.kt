@@ -11,6 +11,7 @@ val SharinganDarkRed = Color(0xFFB71C1C)
 val AkatsukiRed = Color(0xFFD32F2F)
 val UchihaGrey = Color(0xFF9E9E9E)
 val UchihaWhite = Color(0xFFF5F5F5)
-// Blancos con alfa para texto secundario e iconos (antes `Color.White.copy(alpha = …)` repetido en las pantallas).
+// Blancos con alfa para texto secundario, iconos, bordes sin foco y pista inactiva (antes `Color.White.copy(alpha = …)` repetido en las pantallas).
 val UchihaWhiteSecondary = Color.White.copy(alpha = 0.7f)
 val UchihaWhiteMuted = Color.White.copy(alpha = 0.6f)
+val UchihaWhiteDim = Color.White.copy(alpha = 0.3f)
