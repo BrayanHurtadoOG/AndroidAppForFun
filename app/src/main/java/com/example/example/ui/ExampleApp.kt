@@ -19,9 +19,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.example.R
-import com.example.example.data.MediaRepository
-import com.example.example.data.PlaylistRepository
-import com.example.example.data.db.UchihaDatabase
 import com.example.example.ui.navigation.UchihaNavHost
 
 @Composable
