@@ -51,6 +51,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-17] Kaguya — Pulido: README al día con Coil, Hilt y Navigation (turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-17`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `README.md`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21) ni sobre los PR #24, #25, #26 y #27 de pulido, no se toman tareas nuevas). El README describía como pendientes Coil, Hilt y Navigation Compose, ya fusionados en `master` (PR #20, #6 y #13): se marcan hechos en «Mejoras sugeridas», se corrigen la Factory manual (ahora Hilt), la creación del ViewModel en `MainActivity` (ahora `hiltViewModel()` en `ExampleApp`) y el resaltado de la canción seleccionada (fondo blanco semitransparente, no `primaryContainer`), y el árbol suma `di/AppModule.kt` y `ui/navigation/UchihaNavHost.kt`. Solo documentación, sin cambio de código ni de comportamiento. No se toca la fila de volumen (PR #23) ni los alfa que ya unifican los PR #24 y #25.
+- **Pendiente:** Shinku revisa el texto (sin JDK/SDK en la VM de Kaguya, no aplica compilar aquí; es solo docs). Nota: los PR #24, #25, #26 y #27 siguen abiertos y tocan el changelog; al fusionar puede haber conflicto en `Agents.changelogs.md` por insertar en el mismo sitio — se resuelve rebasando.
+
 ### [2026-11-06] Kaguya — Pulido: unificar literales duplicados en UI (turno sin veredicto)
 
 - **Rama:** `kaguya/polish-2026-11-06`
