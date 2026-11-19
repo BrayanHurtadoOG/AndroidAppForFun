@@ -51,6 +51,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-19] Kaguya — Pulido: unificar el 96.dp duplicado en PlaylistsScreen (turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-19`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/PlaylistsScreen.kt`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21) ni sobre los PR #24, #25, #26, #27, #28 y #29 de pulido, no se toman tareas nuevas). El `96.dp` de holgura inferior estaba repetido en las dos `LazyColumn` de `PlaylistsScreen.kt` (lista de playlists y detalle de playlist): ahora es la constante privada `MiniPlayerClearance`, con comentario que explica que deja visible el último ítem por encima de la cápsula flotante del mini-player. Sin cambio de comportamiento.
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: los PR #23, #24, #25, #26, #27, #28 y #29 siguen abiertos y tocan el changelog; al fusionar puede haber conflicto en `Agents.changelogs.md` por insertar en el mismo sitio — se resuelve rebasando.
+
 ### [2026-11-06] Kaguya — Pulido: unificar literales duplicados en UI (turno sin veredicto)
 
 - **Rama:** `kaguya/polish-2026-11-06`
