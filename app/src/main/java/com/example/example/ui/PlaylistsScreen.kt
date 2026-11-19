@@ -55,6 +55,10 @@ import com.example.example.ui.theme.UchihaDialog
 import com.example.example.ui.theme.UchihaWhiteMuted
 import com.example.example.ui.theme.UchihaWhiteSecondary
 
+// Holgura inferior de las listas para que el último ítem no quede tapado
+// por la cápsula flotante del mini-player.
+private val MiniPlayerClearance = 96.dp
+
 /**
  * Pestaña de playlists: lista las playlists del usuario (Room),
  * permite crear/borrar y abrir cada una para gestionarla.
@@ -106,7 +110,7 @@ fun PlaylistsTab(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 96.dp)
+                    .padding(bottom = MiniPlayerClearance)
             ) {
                 items(playlists, key = { it.id }) { playlist ->
                     PlaylistCard(
@@ -281,7 +285,7 @@ fun PlaylistDetailScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 96.dp)
+                .padding(bottom = MiniPlayerClearance)
         ) {
             items(entries, key = { it.id }) { entry ->
                 PlaylistSongRow(
