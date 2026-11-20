@@ -363,7 +363,7 @@ private fun CreatePlaylistDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = UchihaDialog,
-        title = { Text("Nueva playlist", color = Color.White, fontWeight = FontWeight.Bold) },
+        title = { PlaylistDialogTitle("Nueva playlist") },
         text = {
             OutlinedTextField(
                 value = name,
@@ -385,11 +385,7 @@ private fun CreatePlaylistDialog(
                 Text("Crear", color = SharinganRed, fontWeight = FontWeight.Bold)
             }
         },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancelar", color = UchihaWhiteSecondary)
-            }
-        }
+        dismissButton = { PlaylistDialogDismissButton("Cancelar", onDismiss) }
     )
 }
 
@@ -403,7 +399,7 @@ private fun ConfirmDeletePlaylistDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = UchihaDialog,
-        title = { Text("Borrar playlist", color = Color.White, fontWeight = FontWeight.Bold) },
+        title = { PlaylistDialogTitle("Borrar playlist") },
         text = {
             Text(
                 text = "¿Borrar \"$playlistName\"? Las canciones de tu biblioteca no se afectan.",
@@ -415,11 +411,7 @@ private fun ConfirmDeletePlaylistDialog(
                 Text("Borrar", color = SharinganRed, fontWeight = FontWeight.Bold)
             }
         },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancelar", color = UchihaWhiteSecondary)
-            }
-        }
+        dismissButton = { PlaylistDialogDismissButton("Cancelar", onDismiss) }
     )
 }
 
@@ -437,7 +429,7 @@ fun AddToPlaylistDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = UchihaDialog,
-        title = { Text("Añadir a playlist", color = Color.White, fontWeight = FontWeight.Bold) },
+        title = { PlaylistDialogTitle("Añadir a playlist") },
         text = {
             if (playlists.isEmpty()) {
                 Text(
@@ -486,10 +478,25 @@ fun AddToPlaylistDialog(
             }
         },
         confirmButton = {},
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cerrar", color = UchihaWhiteSecondary)
-            }
-        }
+        dismissButton = { PlaylistDialogDismissButton("Cerrar", onDismiss) }
     )
+}
+
+/**
+ * Título compartido por los diálogos de playlists: texto blanco en negrita.
+ */
+@Composable
+private fun PlaylistDialogTitle(text: String) {
+    Text(text, color = Color.White, fontWeight = FontWeight.Bold)
+}
+
+/**
+ * Botón de cierre compartido por los diálogos de playlists
+ * ("Cancelar" al crear o borrar, "Cerrar" al añadir a playlist).
+ */
+@Composable
+private fun PlaylistDialogDismissButton(text: String, onDismiss: () -> Unit) {
+    TextButton(onClick = onDismiss) {
+        Text(text, color = UchihaWhiteSecondary)
+    }
 }
