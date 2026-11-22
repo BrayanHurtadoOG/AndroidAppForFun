@@ -53,6 +53,7 @@ import com.example.example.data.db.Playlist
 import com.example.example.ui.theme.SharinganRed
 import com.example.example.ui.theme.UchihaDialog
 import com.example.example.ui.theme.UchihaWhiteDim
+import com.example.example.ui.theme.UchihaWhiteFaint
 import com.example.example.ui.theme.UchihaWhiteMuted
 import com.example.example.ui.theme.UchihaWhiteSecondary
 
@@ -203,7 +204,7 @@ private fun PlaylistCard(
                 )
                 Text(
                     text = trackCountText(playlist.songCount),
-                    color = Color.White.copy(alpha = 0.6f),
+                    color = UchihaWhiteMuted,
                     fontSize = 13.sp
                 )
             }
@@ -264,7 +265,7 @@ fun PlaylistDetailScreen(
                 )
                 Text(
                     text = trackCountText(entries.size),
-                    color = Color.White.copy(alpha = 0.6f),
+                    color = UchihaWhiteMuted,
                     fontSize = 13.sp
                 )
             }
@@ -346,7 +347,7 @@ private fun PlaylistSongRow(
             Icon(
                 Icons.Default.Close,
                 contentDescription = "Quitar de la playlist",
-                tint = Color.White.copy(alpha = 0.5f)
+                tint = UchihaWhiteFaint
             )
         }
     }
@@ -475,7 +476,7 @@ fun AddToPlaylistDialog(
                                 )
                                 Text(
                                     text = trackCountText(playlist.songCount),
-                                    color = Color.White.copy(alpha = 0.6f),
+                                    color = UchihaWhiteMuted,
                                     fontSize = 12.sp
                                 )
                             }
