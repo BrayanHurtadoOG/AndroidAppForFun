@@ -51,13 +51,13 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
-### [2026-11-19] Kaguya — Pulido: unificar el 96.dp duplicado en PlaylistsScreen (turno sin veredicto)
+### [2026-11-20] Kaguya — Pulido: título y botón de cierre compartidos por los diálogos de playlists (turno sin veredicto)
 
-- **Rama:** `kaguya/polish-2026-11-19`
+- **Rama:** `kaguya/polish-2026-11-20`
 - **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
 - **Archivos:** `app/src/main/java/com/example/example/ui/PlaylistsScreen.kt`, `Agents.changelogs.md`
-- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21) ni sobre los PR #24, #25, #26, #27, #28 y #29 de pulido, no se toman tareas nuevas). El `96.dp` de holgura inferior estaba repetido en las dos `LazyColumn` de `PlaylistsScreen.kt` (lista de playlists y detalle de playlist): ahora es la constante privada `MiniPlayerClearance`, con comentario que explica que deja visible el último ítem por encima de la cápsula flotante del mini-player. Sin cambio de comportamiento.
-- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: los PR #23, #24, #25, #26, #27, #28 y #29 siguen abiertos y tocan el changelog; al fusionar puede haber conflicto en `Agents.changelogs.md` por insertar en el mismo sitio — se resuelve rebasando.
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21) ni sobre los PR #24, #25, #26, #27, #28, #29 y #30 de pulido, no se toman tareas nuevas). Los tres `AlertDialog` de `PlaylistsScreen.kt` (crear playlist, confirmar borrado, añadir a playlist) repetían el mismo título (`Text` blanco en negrita) y el mismo botón de cierre (`TextButton` con texto en `UchihaWhiteSecondary`): ahora son los composables privados `PlaylistDialogTitle(text)` y `PlaylistDialogDismissButton(text, onDismiss)` — «Cancelar» al crear y al borrar, «Cerrar» al añadir. Sin cambio de comportamiento ni de aspecto. No se tocan los alfa que ya unifican los PR #24 y #25, el `96.dp` del PR #30 ni el `!!` del PR #29.
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: los PR #23, #24, #25, #26, #27, #28, #29 y #30 siguen abiertos y tocan el changelog; al fusionar puede haber conflicto en `Agents.changelogs.md` por insertar en el mismo sitio — se resuelve rebasando.
 
 ### [2026-11-06] Kaguya — Pulido: unificar literales duplicados en UI (turno sin veredicto)
 
