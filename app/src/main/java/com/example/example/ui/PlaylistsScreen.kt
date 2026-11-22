@@ -52,8 +52,14 @@ import com.example.example.data.Song
 import com.example.example.data.db.Playlist
 import com.example.example.ui.theme.SharinganRed
 import com.example.example.ui.theme.UchihaDialog
+import com.example.example.ui.theme.UchihaWhiteDim
+import com.example.example.ui.theme.UchihaWhiteFaint
 import com.example.example.ui.theme.UchihaWhiteMuted
 import com.example.example.ui.theme.UchihaWhiteSecondary
+
+// Holgura inferior de las listas para que el último ítem no quede tapado
+// por la cápsula flotante del mini-player.
+private val MiniPlayerClearance = 96.dp
 
 /**
  * Pestaña de playlists: lista las playlists del usuario (Room),
@@ -70,10 +76,12 @@ fun PlaylistsTab(
     var showCreateDialog by remember { mutableStateOf(false) }
     var openPlaylist by remember { mutableStateOf<Playlist?>(null) }
 
-    if (openPlaylist != null) {
+    // Playlist abierta: su detalle sustituye a la lista (la única aserción no nula
+    // del código vivía aquí; `?.let` la evita sin cambiar el comportamiento).
+    openPlaylist?.let { playlist ->
         PlaylistDetailScreen(
             viewModel = viewModel,
-            playlist = openPlaylist!!,
+            playlist = playlist,
             onBack = { openPlaylist = null }
         )
         return
@@ -106,7 +114,7 @@ fun PlaylistsTab(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 96.dp)
+                    .padding(bottom = MiniPlayerClearance)
             ) {
                 items(playlists, key = { it.id }) { playlist ->
                     PlaylistCard(
@@ -202,7 +210,7 @@ private fun PlaylistCard(
                 )
                 Text(
                     text = trackCountText(playlist.songCount),
-                    color = Color.White.copy(alpha = 0.6f),
+                    color = UchihaWhiteMuted,
                     fontSize = 13.sp
                 )
             }
@@ -263,7 +271,7 @@ fun PlaylistDetailScreen(
                 )
                 Text(
                     text = trackCountText(entries.size),
-                    color = Color.White.copy(alpha = 0.6f),
+                    color = UchihaWhiteMuted,
                     fontSize = 13.sp
                 )
             }
@@ -281,7 +289,7 @@ fun PlaylistDetailScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 96.dp)
+                .padding(bottom = MiniPlayerClearance)
         ) {
             items(entries, key = { it.id }) { entry ->
                 PlaylistSongRow(
@@ -306,7 +314,6 @@ fun PlaylistDetailScreen(
             onDismiss = { showDeleteConfirm = false },
             onConfirm = {
                 viewModel.deletePlaylist(playlist.id)
-                showDeleteConfirm = false
                 onBack()
             }
         )
@@ -346,7 +353,7 @@ private fun PlaylistSongRow(
             Icon(
                 Icons.Default.Close,
                 contentDescription = "Quitar de la playlist",
-                tint = Color.White.copy(alpha = 0.5f)
+                tint = UchihaWhiteFaint
             )
         }
     }
@@ -376,7 +383,7 @@ private fun CreatePlaylistDialog(
                     unfocusedTextColor = Color.White,
                     cursorColor = SharinganRed,
                     focusedBorderColor = SharinganRed,
-                    unfocusedBorderColor = Color.White.copy(alpha = 0.3f)
+                    unfocusedBorderColor = UchihaWhiteDim
                 )
             )
         },
@@ -467,7 +474,7 @@ fun AddToPlaylistDialog(
                                 )
                                 Text(
                                     text = trackCountText(playlist.songCount),
-                                    color = Color.White.copy(alpha = 0.6f),
+                                    color = UchihaWhiteMuted,
                                     fontSize = 12.sp
                                 )
                             }
