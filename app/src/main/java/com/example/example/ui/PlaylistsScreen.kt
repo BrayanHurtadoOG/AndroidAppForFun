@@ -72,10 +72,12 @@ fun PlaylistsTab(
     var showCreateDialog by remember { mutableStateOf(false) }
     var openPlaylist by remember { mutableStateOf<Playlist?>(null) }
 
-    if (openPlaylist != null) {
+    // Playlist abierta: su detalle sustituye a la lista (la única aserción no nula
+    // del código vivía aquí; `?.let` la evita sin cambiar el comportamiento).
+    openPlaylist?.let { playlist ->
         PlaylistDetailScreen(
             viewModel = viewModel,
-            playlist = openPlaylist!!,
+            playlist = playlist,
             onBack = { openPlaylist = null }
         )
         return

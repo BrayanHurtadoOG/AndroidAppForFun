@@ -51,6 +51,13 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-18] Kaguya — Pulido: quitar el único `!!` del código (turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-18`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/PlaylistsScreen.kt`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21) ni sobre los PR #24, #25, #26, #27 y #28 de pulido, no se toman tareas nuevas). `PlaylistsTab` abría el detalle con `if (openPlaylist != null)` + `openPlaylist!!` — la única aserción no nula de todo el código; ahora es `openPlaylist?.let { playlist -> ... }`, sin cambio de comportamiento. No se toca la fila de volumen de `NowPlayingScreen.kt` (eso es el PR #23) ni los alfa que ya unifican los PR #24 y #25.
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: los PR #23, #24, #25, #26, #27 y #28 siguen abiertos y tocan el changelog; al fusionar puede haber conflicto en `Agents.changelogs.md` por insertar en el mismo sitio — se resuelve rebasando.
 ### [2026-11-17] Kaguya — Pulido: README al día con Coil, Hilt y Navigation (turno sin veredicto)
 
 - **Rama:** `kaguya/polish-2026-11-17`
