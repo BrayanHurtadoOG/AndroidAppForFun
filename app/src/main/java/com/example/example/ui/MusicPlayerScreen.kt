@@ -67,6 +67,8 @@ import com.example.example.R
 import com.example.example.data.Song
 import com.example.example.ui.components.AlbumArt
 import com.example.example.ui.theme.SharinganRed
+import com.example.example.ui.theme.UchihaWhiteDim
+import com.example.example.ui.theme.UchihaWhiteFaint
 import com.example.example.ui.theme.UchihaWhiteMuted
 import com.example.example.ui.theme.UchihaWhiteSecondary
 
@@ -266,7 +268,7 @@ private fun SongsListContent(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     placeholder = {
-                        Text("Buscar canciones...", color = Color.White.copy(alpha = 0.5f))
+                        Text("Buscar canciones...", color = UchihaWhiteFaint)
                     },
                     singleLine = true,
                     shape = RoundedCornerShape(24.dp),
@@ -275,7 +277,7 @@ private fun SongsListContent(
                         unfocusedTextColor = Color.White,
                         cursorColor = SharinganRed,
                         focusedBorderColor = SharinganRed,
-                        unfocusedBorderColor = Color.White.copy(alpha = 0.3f)
+                        unfocusedBorderColor = UchihaWhiteDim
                     )
                 )
             }
@@ -426,7 +428,7 @@ fun SongItem(
     song: Song,
     isSelected: Boolean,
     onClick: () -> Unit,
-    onAddToPlaylist: () -> Unit = {}
+    onAddToPlaylist: (Song) -> Unit = {}
 ) {
     // Cada item tiene un fondo semitransparente que deja ver el anime detrás
     Row(
@@ -476,7 +478,7 @@ fun SongItem(
             Icon(
                 Icons.Default.MoreVert,
                 contentDescription = "Opciones",
-                tint = Color.White.copy(alpha = 0.5f)
+                tint = UchihaWhiteFaint
             )
         }
     }
@@ -525,7 +527,7 @@ fun PlaybackControls(
                 colors = SliderDefaults.colors(
                     thumbColor = SharinganRed,
                     activeTrackColor = SharinganRed,
-                    inactiveTrackColor = Color.White.copy(alpha = 0.3f)
+                    inactiveTrackColor = UchihaWhiteDim
                 )
             )
             // Fila de tiempos mm:ss / mm:ss

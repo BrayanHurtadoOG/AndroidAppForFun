@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.RepeatOne
 import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -64,7 +63,6 @@ fun NowPlayingScreen(
     val isPlaying by viewModel.isPlaying
     val isShuffleEnabled by viewModel.isShuffleEnabled
     val repeatMode by viewModel.repeatMode
-    val volume by viewModel.volume
     val positionMs by viewModel.positionMs
     val durationMs by viewModel.durationMs
 
@@ -210,7 +208,7 @@ fun NowPlayingScreen(
                         Icon(
                             imageVector = Icons.Default.Shuffle,
                             contentDescription = "Aleatorio",
-                            tint = if (isShuffleEnabled) SharinganRed else Color.White.copy(alpha = 0.7f),
+                            tint = if (isShuffleEnabled) SharinganRed else UchihaWhiteSecondary,
                             modifier = Modifier.size(28.dp)
                         )
                     }
@@ -247,34 +245,13 @@ fun NowPlayingScreen(
                         Icon(
                             imageVector = if (repeatMode == Player.REPEAT_MODE_ONE) Icons.Default.RepeatOne else Icons.Default.Repeat,
                             contentDescription = "Repetir",
-                            tint = if (repeatMode != Player.REPEAT_MODE_OFF) SharinganRed else Color.White.copy(alpha = 0.7f),
+                            tint = if (repeatMode != Player.REPEAT_MODE_OFF) SharinganRed else UchihaWhiteSecondary,
                             modifier = Modifier.size(28.dp)
                         )
                     }
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
-
-                // Fila de volumen
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.VolumeUp,
-                        contentDescription = "Volumen",
-                        tint = Color.White.copy(alpha = 0.8f),
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Slider(
-                        value = volume,
-                        onValueChange = viewModel::setVolume,
-                        valueRange = 0f..1f,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 8.dp)
-                    )
-                }
 
                 Spacer(modifier = Modifier.height(8.dp))
             }
