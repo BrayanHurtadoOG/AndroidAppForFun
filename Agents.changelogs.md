@@ -51,6 +51,13 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-15] Kaguya — Pulido: quitar imports sin uso en ExampleApp (turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-15`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/ExampleApp.kt`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21) ni sobre los PR #24 y #25 de pulido, no se toman tareas nuevas). Quitados 3 imports sin uso en `ExampleApp.kt` (`MediaRepository`, `PlaylistRepository`, `UchihaDatabase`), restos de antes de la migración a Hilt: la pantalla ya obtiene el ViewModel con `hiltViewModel()` y los repositorios se inyectan en él, así que nada los referencia aquí. Sin cambio de comportamiento. No se tocan los imports `getValue`/`setValue` de las pantallas: los exige la delegación `by` aunque el nombre no aparezca en el cuerpo. No se toca `Color.kt` ni las pantallas que ya unifican los PR #24 y #25.
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: los PR #24 y #25 siguen abiertos y tocan `Color.kt` y el changelog; al fusionar puede haber conflicto en el changelog por insertar en el mismo sitio — se resuelve rebasando.
 ### [2026-11-14] Kaguya — Pulido: unificar blanco con alfa 0.3f repetido en UI (turno sin veredicto)
 
 - **Rama:** `kaguya/polish-2026-11-14`
