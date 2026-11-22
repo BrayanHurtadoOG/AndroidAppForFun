@@ -51,6 +51,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-21] Kaguya — Pulido: imports explícitos en ExampleApp (turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-21`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/ExampleApp.kt`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21) ni sobre los PR #24, #25, #26, #27, #28, #29, #30 y #31 de pulido, no se toman tareas nuevas). `ExampleApp.kt` era el único archivo de la UI con import comodín (`import androidx.compose.runtime.*`); ahora importa explícitos los 6 símbolos de runtime que usa (`Composable`, `LaunchedEffect`, `getValue`, `mutableStateOf`, `remember`, `setValue`), como ya hacen el resto de pantallas. Sin cambio de comportamiento.
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: el PR #26 abierto también toca el bloque de imports de `ExampleApp.kt` (quita 3 imports sin uso, en líneas distintas); al fusionar puede haber conflicto en el changelog por insertar en el mismo sitio — se resuelve rebasando.
+
 ### [2026-11-06] Kaguya — Pulido: unificar literales duplicados en UI (turno sin veredicto)
 
 - **Rama:** `kaguya/polish-2026-11-06`
