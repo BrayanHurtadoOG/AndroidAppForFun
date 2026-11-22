@@ -8,7 +8,7 @@
 - Reproducir/pausar canciones desde una interfaz moderna
 - Reproducción en segundo plano mediante un Foreground Service
 - Cola de reproducción real: al terminar una canción avanza sola a la siguiente
-- Controles de reproducción persistentes en la barra inferior + seekbar arrastrable
+- Controles de reproducción en cápsula flotante + seekbar arrastrable
 - Shuffle y modos de repetición (off / all / one)
 - Búsqueda/filtrado de canciones por título o artista
 - Pantalla completa "Now Playing" con carátula grande y slider de volumen
@@ -35,9 +35,13 @@ UchihaPlayer/
 │   │   │   │   │       ├── PlaylistEntities.kt     # Entidades Room de playlists
 │   │   │   │   │       ├── PlaylistDao.kt          # DAO de playlists
 │   │   │   │   │       └── UchihaDatabase.kt       # Base Room `uchiha-player.db`
+│   │   │   │   ├── di/
+│   │   │   │   │   └── AppModule.kt            # Módulo Hilt (Room singleton + PlaylistDao)
 │   │   │   │   ├── ui/
 │   │   │   │   │   ├── components/
-│   │   │   │   │   │   └── AlbumArt.kt             # Carátula desde MediaStore (fallback Sharingan)
+│   │   │   │   │   │   └── AlbumArt.kt             # Carátula con Coil 3 desde MediaStore (fallback Sharingan)
+│   │   │   │   │   ├── navigation/
+│   │   │   │   │   │   └── UchihaNavHost.kt         # Grafo Navigation Compose (canciones, playlists, detalle, Now Playing)
 │   │   │   │   │   ├── theme/
 │   │   │   │   │   │   ├── Color.kt                # Paleta Uchiha (negro + rojo Sharingan)
 │   │   │   │   │   │   ├── Theme.kt                # Tema oscuro fijo del clan (sin dynamic color)
@@ -84,13 +88,15 @@ UchihaPlayer/
 ### UI
 - **Jetpack Compose 2026.02.01 (BOM)** - Toolkit declarativo moderno
 - **Material3** - Sistema de diseño de Google
+- **Coil 3** - Carga de carátulas desde MediaStore (caché en memoria/disco, fallback al Sharingan)
+- **Navigation Compose** - Grafo de destinos (canciones, playlists, detalle de playlist, Now Playing)
 - **Scaffold, LazyColumn, Card, IconButton** - Componentes Compose
 - **Tema oscuro fijo del clan Uchiha** - Paleta propia (negro #0A0A0C + rojo Sharingan #E53935), dynamic color desactivado a propósito
 
 ### Arquitectura y Ciclo de Vida
 - **ViewModel** + **StateFlow** - Gestión del estado sobreviviendo a cambios de configuración
 - **viewModelScope** - Corrutinas ligadas al ciclo de vida del ViewModel
-- **ViewModelProvider.Factory** - Inyección manual de dependencias
+- **Hilt** - Inyección de dependencias (`AppModule`, `@HiltViewModel`, `hiltViewModel()`)
 
 ### Reproducción de Audio
 - **Media3 1.10.1** (anteriormente ExoPlayer)
@@ -146,11 +152,9 @@ UchihaPlayer/
 
 ### 2. `MainActivity.kt`
 - Extiende **`ComponentActivity`** (base para Compose)
+- `@AndroidEntryPoint` - Punto de entrada de Hilt
 - `enableEdgeToEdge()` - Modo edge-to-edge (contenido bajo barras de estado/navegación)
-- `setContent { }` - Establece el árbol Compose como contenido de la Activity
-- Maneja **solicitud de permisos runtime** con `rememberLauncherForActivityResult`
-- Crea `MediaRepository` y `MusicViewModel` con Factory personalizada
-- `LaunchedEffect(Unit)` - Efecto de composición que se ejecuta una sola vez
+- `setContent { }` - Aplica `ExampleTheme` y muestra `ExampleApp` (el permiso de audio y el ViewModel con Hilt viven en `ExampleApp`)
 
 ### 3. `MusicViewModel.kt`
 ```kotlin
@@ -193,7 +197,7 @@ context.contentResolver.query(
 - **`LazyColumn`**: Lista eficiente (solo compone lo visible, como RecyclerView)
 - **`collectAsState()`**: Convierte `StateFlow` a `State` de Compose (recompone cuando cambia)
 - **`SongItem`**: Cada canción es una `Card` clickeable con `modifier.clickable`
-- **Resalte visual**: La canción seleccionada usa `primaryContainer` como color de fondo
+- **Resalte visual**: la canción seleccionada se resalta con un fondo blanco semitransparente
 - **Iconos Material**: `Icons.Default.PlayArrow` / `Pause`
 
 ---
@@ -257,9 +261,9 @@ context.contentResolver.query(
 - [x] Playlists (con Room Database) — `PlaylistEntity`/`PlaylistSongEntity`, `PlaylistDao`, `UchihaDatabase`, pestaña Playlists en la UI con crear/borrar/añadir/quitar/reproducir
 - [x] Pantalla de "Now Playing" a pantalla completa (fondo Mangekyou de Itachi)
 - [x] Miniatura de álbum (carátula) desde MediaStore (fallback al Sharingan)
-- [ ] Coil para carga de imágenes — pendiente (hoy se usa `loadThumbnail` + `painterResource`)
-- [x] Hilt para inyección de dependencias (reemplazar Factory manual) — rama `kurama/hilt-migration` (pendiente de build en Android Studio)
-- [ ] Navigation Compose para múltiples pantallas — pendiente (hoy navegación por estado)
+- [x] Coil 3 para carga de imágenes (`AsyncImage` + caché, fallback al Sharingan)
+- [x] Hilt para inyección de dependencias (reemplaza la Factory manual)
+- [x] Navigation Compose para múltiples pantallas (grafo `UchihaNavHost`: canciones, playlists, detalle y Now Playing)
 
 ## 🔥 Temática del clan Uchiha
 - **Paleta** (`ui/theme/`): `UchihaBlack #0A0A0C`, superficies oscuras, `SharinganRed #E53935` como primario, `AkatsukiRed`/`SharinganDarkRed` como acentos. Tema siempre oscuro, sin dynamic color.
