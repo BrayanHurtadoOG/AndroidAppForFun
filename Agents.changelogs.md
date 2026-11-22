@@ -51,6 +51,13 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-16] Kaguya — Pulido: quitar código muerto en ui/theme (turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-16`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/theme/Type.kt`, `app/src/main/java/com/example/example/ui/theme/Uchiha.kt` (eliminado), `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21) ni sobre los PR #24, #25 y #26 de pulido, no se toman tareas nuevas). Limpieza de código muerto en el tema, sin cambio de comportamiento: (1) se elimina `Uchiha.kt`, que solo contenía el paquete y un comentario — no declaraba ningún símbolo y nada lo importaba (resto de la limpieza del `SharinganRed` duplicado del PR #15); (2) se quita de `Type.kt` el bloque comentado de la plantilla (`titleLarge`, `labelSmall`), estilos por defecto sin usar. No se tocan los colores ni las pantallas que ya unifican los PR #24 y #25, ni la fila de volumen de `NowPlayingScreen.kt` (PR #23).
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: los PR #23, #24, #25 y #26 siguen abiertos y tocan el changelog; al fusionar puede haber conflicto en `Agents.changelogs.md` por insertar en el mismo sitio — se resuelve rebasando.
 ### [2026-11-15] Kaguya — Pulido: quitar imports sin uso en ExampleApp (turno sin veredicto)
 
 - **Rama:** `kaguya/polish-2026-11-15`
