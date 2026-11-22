@@ -58,6 +58,48 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 - **Archivos:** `README.md`, `Agents.changelogs.md`
 - **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21) ni sobre los PR #24, #25, #26 y #27 de pulido, no se toman tareas nuevas). El README describía como pendientes Coil, Hilt y Navigation Compose, ya fusionados en `master` (PR #20, #6 y #13): se marcan hechos en «Mejoras sugeridas», se corrigen la Factory manual (ahora Hilt), la creación del ViewModel en `MainActivity` (ahora `hiltViewModel()` en `ExampleApp`) y el resaltado de la canción seleccionada (fondo blanco semitransparente, no `primaryContainer`), y el árbol suma `di/AppModule.kt` y `ui/navigation/UchihaNavHost.kt`. Solo documentación, sin cambio de código ni de comportamiento. No se toca la fila de volumen (PR #23) ni los alfa que ya unifican los PR #24 y #25.
 - **Pendiente:** Shinku revisa el texto (sin JDK/SDK en la VM de Kaguya, no aplica compilar aquí; es solo docs). Nota: los PR #24, #25, #26 y #27 siguen abiertos y tocan el changelog; al fusionar puede haber conflicto en `Agents.changelogs.md` por insertar en el mismo sitio — se resuelve rebasando.
+### [2026-11-16] Kaguya — Pulido: quitar código muerto en ui/theme (turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-16`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/theme/Type.kt`, `app/src/main/java/com/example/example/ui/theme/Uchiha.kt` (eliminado), `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21) ni sobre los PR #24, #25 y #26 de pulido, no se toman tareas nuevas). Limpieza de código muerto en el tema, sin cambio de comportamiento: (1) se elimina `Uchiha.kt`, que solo contenía el paquete y un comentario — no declaraba ningún símbolo y nada lo importaba (resto de la limpieza del `SharinganRed` duplicado del PR #15); (2) se quita de `Type.kt` el bloque comentado de la plantilla (`titleLarge`, `labelSmall`), estilos por defecto sin usar. No se tocan los colores ni las pantallas que ya unifican los PR #24 y #25, ni la fila de volumen de `NowPlayingScreen.kt` (PR #23).
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: los PR #23, #24, #25 y #26 siguen abiertos y tocan el changelog; al fusionar puede haber conflicto en `Agents.changelogs.md` por insertar en el mismo sitio — se resuelve rebasando.
+### [2026-11-15] Kaguya — Pulido: quitar imports sin uso en ExampleApp (turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-15`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/ExampleApp.kt`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21) ni sobre los PR #24 y #25 de pulido, no se toman tareas nuevas). Quitados 3 imports sin uso en `ExampleApp.kt` (`MediaRepository`, `PlaylistRepository`, `UchihaDatabase`), restos de antes de la migración a Hilt: la pantalla ya obtiene el ViewModel con `hiltViewModel()` y los repositorios se inyectan en él, así que nada los referencia aquí. Sin cambio de comportamiento. No se tocan los imports `getValue`/`setValue` de las pantallas: los exige la delegación `by` aunque el nombre no aparezca en el cuerpo. No se toca `Color.kt` ni las pantallas que ya unifican los PR #24 y #25.
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: los PR #24 y #25 siguen abiertos y tocan `Color.kt` y el changelog; al fusionar puede haber conflicto en el changelog por insertar en el mismo sitio — se resuelve rebasando.
+### [2026-11-14] Kaguya — Pulido: unificar blanco con alfa 0.3f repetido en UI (turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-14`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/theme/Color.kt`, `app/src/main/java/com/example/example/ui/MusicPlayerScreen.kt`, `app/src/main/java/com/example/example/ui/PlaylistsScreen.kt`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21, quitar el slider de volumen) ni sobre el PR #24 de pulido, no se toman tareas nuevas; la #22 sigue en `backlog` bloqueada por la #21). Un dedup de literales en la UI, sin cambio de comportamiento: `Color.White.copy(alpha = 0.3f)` estaba repetido 3 veces — borde sin foco del buscador y pista inactiva del slider del mini-player en `MusicPlayerScreen.kt`, borde sin foco del diálogo de crear playlist en `PlaylistsScreen.kt` — ahora es `UchihaWhiteDim` en `Color.kt`. No se tocan la fila de volumen de `NowPlayingScreen.kt` (eso es el PR #23) ni los literales 0.5f/0.6f/0.7f que ya unifica el PR #24.
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: el PR #24 abierto toca los mismos archivos (`Color.kt`, `MusicPlayerScreen.kt`, `PlaylistsScreen.kt`, `Agents.changelogs.md`); al fusionar puede haber conflicto en `Color.kt` y en el changelog por insertar en el mismo sitio — se resuelve rebasando.
+### [2026-11-13] Kaguya — Pulido: unificar blancos con alfa repetidos en UI (turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-13`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/NowPlayingScreen.kt`, `app/src/main/java/com/example/example/ui/MusicPlayerScreen.kt`, `app/src/main/java/com/example/example/ui/PlaylistsScreen.kt`, `app/src/main/java/com/example/example/ui/theme/Color.kt`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21, quitar el slider de volumen), no se toman tareas nuevas; el issue #22 sigue en `backlog` y depende de que se fusione la #21). Tres dedups de blancos con alfa en la UI, sin cambio de comportamiento: (1) `NowPlayingScreen.kt` usaba `Color.White.copy(alpha = 0.7f)` en los tintes inactivos de aleatorio y repetir — ahora usa `UchihaWhiteSecondary` (2 usos), como ya hacía `ActionButtonsBar`; (2) `Color.White.copy(alpha = 0.5f)` estaba repetido 3 veces (placeholder del buscador y ⋮ de canción en `MusicPlayerScreen.kt`, ✕ de quitar en `PlaylistsScreen.kt`) — ahora es `UchihaWhiteFaint` en `Color.kt`; (3) `Color.White.copy(alpha = 0.6f)` estaba repetido 3 veces en los contadores «N pistas» de `PlaylistsScreen.kt` — ahora es `UchihaWhiteMuted`. No se toca la fila de volumen de `NowPlayingScreen.kt` (eso es el PR #23) ni el mini-player.
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí).
+### [2026-11-12] Kaguya — Quitar el slider de volumen de Now Playing (issue #21)
+
+- **Rama:** `kaguya/remove-volume-slider`
+- **Estado:** en revisión (PR #23 abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/NowPlayingScreen.kt`, `Agents.changelogs.md`
+- **Cambios:** issue #21, adelantado a petición de Shinku el 2026-11-12 (el Sprint 2 sigue sin abrirse: el issue sigue en `backlog` en su cuerpo y el tablero sigue en Sprint 1). Quitada la fila de volumen de Now Playing (icono `VolumeUp` + `Slider` con `viewModel::setVolume`), el import de `VolumeUp` y la lectura local `val volume by viewModel.volume` (su único uso era el slider). No se toca el slider de progreso de esa pantalla ni el mini-player de `MusicPlayerScreen.kt`; tampoco `MusicViewModel.kt` (su `volume`/`setVolume` queda sin uso, seguimiento aparte de Kurama según el issue).
+- **Pendiente:** Shinku compila en Android Studio y confirma que Now Playing ya no muestra volumen y que progreso, tiempos y controles siguen igual.
+### [2026-11-21] Kaguya — Pulido: imports explícitos en ExampleApp (turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-21`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/ExampleApp.kt`, `Agents.changelogs.md`
+- **Cambios:** turno de pulido (§8 del flujo de sprints: sin veredicto de Shinku sobre el PR #23 (issue #21) ni sobre los PR #24, #25, #26, #27, #28, #29, #30 y #31 de pulido, no se toman tareas nuevas). `ExampleApp.kt` era el único archivo de la UI con import comodín (`import androidx.compose.runtime.*`); ahora importa explícitos los 6 símbolos de runtime que usa (`Composable`, `LaunchedEffect`, `getValue`, `mutableStateOf`, `remember`, `setValue`), como ya hacen el resto de pantallas. Sin cambio de comportamiento.
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí). Nota: el PR #26 abierto también toca el bloque de imports de `ExampleApp.kt` (quita 3 imports sin uso, en líneas distintas); al fusionar puede haber conflicto en el changelog por insertar en el mismo sitio — se resuelve rebasando.
 
 ### [2026-11-06] Kaguya — Pulido: unificar literales duplicados en UI (turno sin veredicto)
 
