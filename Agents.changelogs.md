@@ -51,6 +51,14 @@ Cada agente registra aquí sus cambios **antes** de tocar código ajeno y **al t
 
 ## Registro
 
+### [2026-11-26] Kaguya — Pulido completo de la capa UI en un solo PR (regla 3b, turno sin veredicto)
+
+- **Rama:** `kaguya/polish-2026-11-26`
+- **Estado:** en revisión (PR abierto contra `master`, sin fusionar: regla 8)
+- **Archivos:** `app/src/main/java/com/example/example/ui/NowPlayingScreen.kt`, `app/src/main/java/com/example/example/ui/MusicPlayerScreen.kt`, `app/src/main/java/com/example/example/ui/PlaylistsScreen.kt`, `app/src/main/java/com/example/example/ui/ExampleApp.kt`, `app/src/main/java/com/example/example/ui/theme/Theme.kt`, `app/src/main/java/com/example/example/ui/navigation/UchihaNavHost.kt`, `Agents.changelogs.md`
+- **Cambios:** pasada completa de pulido de toda la capa UI en UN solo PR (orden de Shinku del 2026-11-22: nada de un PR pequeño por día; 3 días sin veredicto — el último fue el cierre de la #21 el 2026-11-23 — y ningún issue en `listo`). Sin cambio de comportamiento ni de aspecto: (1) tamaños de iconos de los controles de Now Playing como constantes privadas `MainControlIconSize`/`SecondaryControlIconSize` (preparado el 2026-11-22, 5 usos); (2) colores de `OutlinedTextField` duplicados en el buscador y en el diálogo de crear playlist, ahora `UchihaTextFieldColors()` en `Theme.kt`; (3) los dos `Tab` de `MusicPlayerScreen` ahora usan el composable privado `MusicTab`; (4) lambdas de navegación duplicadas en `UchihaNavHost` elevadas a `val` compartidos; (5) tipo `Playlist` cualificado en `MusicPlayerScreen` ahora con import; (6) cuerpo de `SongsListContent` reindentado un nivel (8 → 4 espacios); (7) comentario obsoleto junto a `itachimange` eliminado; (8) permiso de audio repetido en `ExampleApp` como constante `AUDIO_PERMISSION`; (9) parámetros muertos `darkTheme`/`dynamicColor` eliminados de `ExampleTheme` (el tema es siempre oscuro; sus 2 call sites en `MainActivity` no pasan argumentos). No se tocan `MusicViewModel.kt` (área de Kurama), `data/`, `di/` ni el núcleo.
+- **Pendiente:** Shinku compila en Android Studio y confirma que la UI se ve igual (sin JDK/SDK en la VM de Kaguya, no se pudo compilar aquí).
+
 ### [2026-11-20] Kaguya — Pulido: título y botón de cierre compartidos por los diálogos de playlists (turno sin veredicto)
 
 - **Rama:** `kaguya/polish-2026-11-20`

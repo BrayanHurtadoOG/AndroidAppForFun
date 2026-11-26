@@ -51,6 +51,10 @@ import com.example.example.ui.theme.SharinganRed
 import com.example.example.ui.theme.UchihaWhiteMuted
 import com.example.example.ui.theme.UchihaWhiteSecondary
 
+// Tamaños de los iconos de los controles de reproducción (antes literales repetidos).
+private val MainControlIconSize = 40.dp
+private val SecondaryControlIconSize = 28.dp
+
 /**
  * Pantalla completa de "Now Playing" con estética Uchiha.
  */
@@ -209,7 +213,7 @@ fun NowPlayingScreen(
                             imageVector = Icons.Default.Shuffle,
                             contentDescription = "Aleatorio",
                             tint = if (isShuffleEnabled) SharinganRed else UchihaWhiteSecondary,
-                            modifier = Modifier.size(28.dp)
+                            modifier = Modifier.size(SecondaryControlIconSize)
                         )
                     }
                     IconButton(onClick = { viewModel.playPrevious() }) {
@@ -217,7 +221,7 @@ fun NowPlayingScreen(
                             imageVector = Icons.Default.SkipPrevious,
                             contentDescription = "Anterior",
                             tint = Color.White,
-                            modifier = Modifier.size(40.dp)
+                            modifier = Modifier.size(MainControlIconSize)
                         )
                     }
                     IconButton(
@@ -230,7 +234,7 @@ fun NowPlayingScreen(
                             imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
                             contentDescription = if (isPlaying) "Pausar" else "Reproducir",
                             tint = Color.White,
-                            modifier = Modifier.size(40.dp)
+                            modifier = Modifier.size(MainControlIconSize)
                         )
                     }
                     IconButton(onClick = { viewModel.playNext() }) {
@@ -238,7 +242,7 @@ fun NowPlayingScreen(
                             imageVector = Icons.Default.SkipNext,
                             contentDescription = "Siguiente",
                             tint = Color.White,
-                            modifier = Modifier.size(40.dp)
+                            modifier = Modifier.size(MainControlIconSize)
                         )
                     }
                     IconButton(onClick = { viewModel.cycleRepeatMode() }) {
@@ -246,7 +250,7 @@ fun NowPlayingScreen(
                             imageVector = if (repeatMode == Player.REPEAT_MODE_ONE) Icons.Default.RepeatOne else Icons.Default.Repeat,
                             contentDescription = "Repetir",
                             tint = if (repeatMode != Player.REPEAT_MODE_OFF) SharinganRed else UchihaWhiteSecondary,
-                            modifier = Modifier.size(28.dp)
+                            modifier = Modifier.size(SecondaryControlIconSize)
                         )
                     }
                 }

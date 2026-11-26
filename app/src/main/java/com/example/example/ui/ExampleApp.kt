@@ -26,6 +26,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.example.R
 import com.example.example.ui.navigation.UchihaNavHost
 
+// Permiso de audio (lectura de medios): se pide al arrancar si falta.
+private const val AUDIO_PERMISSION = Manifest.permission.READ_MEDIA_AUDIO
+
 @Composable
 fun ExampleApp() {
     // Obtenemos el contexto actual de Android
@@ -38,7 +41,7 @@ fun ExampleApp() {
     // Estado que rastrea si el usuario concedió el permiso de audio
     var permissionGranted by remember {
         mutableStateOf(
-            isPreview || (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED)
+            isPreview || (ContextCompat.checkSelfPermission(context, AUDIO_PERMISSION) == PackageManager.PERMISSION_GRANTED)
         )
     }
 
@@ -90,7 +93,7 @@ fun ExampleApp() {
             ) {
                 Button(onClick = {
                     // Lanza el diálogo del sistema para pedir el permiso
-                    launcher.launch(Manifest.permission.READ_MEDIA_AUDIO)
+                    launcher.launch(AUDIO_PERMISSION)
                 }) {
                     Text("Conceder Permiso para Música")
                 }
