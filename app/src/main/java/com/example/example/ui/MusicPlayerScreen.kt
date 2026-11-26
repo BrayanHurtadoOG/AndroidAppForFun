@@ -36,7 +36,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -65,8 +64,10 @@ import androidx.compose.ui.unit.sp
 import androidx.media3.common.Player
 import com.example.example.R
 import com.example.example.data.Song
+import com.example.example.data.db.Playlist
 import com.example.example.ui.components.AlbumArt
 import com.example.example.ui.theme.SharinganRed
+import com.example.example.ui.theme.UchihaTextFieldColors
 import com.example.example.ui.theme.UchihaWhiteDim
 import com.example.example.ui.theme.UchihaWhiteFaint
 import com.example.example.ui.theme.UchihaWhiteMuted
@@ -87,7 +88,7 @@ fun MusicPlayerScreen(
     onOpenNowPlaying: () -> Unit = {},
     initialTab: Int = 0,
     onTabSelected: (Int) -> Unit = {},
-    onPlaylistClick: ((com.example.example.data.db.Playlist) -> Unit)? = null
+    onPlaylistClick: ((Playlist) -> Unit)? = null
 ) {
     // Observamos los datos del ViewModel: lista de canciones, actual y estado de reproducción
     val songs by viewModel.songs.collectAsState()
@@ -154,28 +155,8 @@ fun MusicPlayerScreen(
                     )
                 }
             ) {
-                Tab(
-                    selected = selectedTab == 0,
-                    onClick = { selectedTab = 0; onTabSelected(0) },
-                    text = {
-                        Text(
-                            "Canciones",
-                            color = if (selectedTab == 0) Color.White else UchihaWhiteMuted,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                )
-                Tab(
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1; onTabSelected(1) },
-                    text = {
-                        Text(
-                            "Playlists",
-                            color = if (selectedTab == 1) Color.White else UchihaWhiteMuted,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                )
+                MusicTab("Canciones", selectedTab == 0) { selectedTab = 0; onTabSelected(0) }
+                MusicTab("Playlists", selectedTab == 1) { selectedTab = 1; onTabSelected(1) }
             }
 
             if (selectedTab == 0) {
@@ -220,6 +201,29 @@ fun MusicPlayerScreen(
 }
 
 /**
+ * Pestaña de [MusicPlayerScreen]: mismo bloque para «Canciones» y «Playlists»,
+ * solo cambian la etiqueta y el índice.
+ */
+@Composable
+private fun MusicTab(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Tab(
+        selected = selected,
+        onClick = onClick,
+        text = {
+            Text(
+                label,
+                color = if (selected) Color.White else UchihaWhiteMuted,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    )
+}
+
+/**
  * Contenido de la pestaña "Canciones": cabecera, acciones, buscador y lista.
  */
 @Composable
@@ -238,63 +242,57 @@ private fun SongsListContent(
     onCycleRepeatMode: () -> Unit,
     onBigPlay: () -> Unit
 ) {
-        // LazyColumn es ideal para listas largas, solo renderiza lo que se ve
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // 1. CABECERA MODERNA (Imagen de playlist + Título + Estadísticas)
-            item {
-                PlaylistHeader(songs = songs)
-            }
-
-            // 2. BARRA DE ACCIONES (Ordenar, Aleatorio, Repetir y botón de Play grande)
-            item {
-                ActionButtonsBar(
-                    isPlaying = isPlaying,
-                    isShuffleEnabled = isShuffleEnabled,
-                    repeatMode = repeatMode,
-                    onToggleShuffle = onToggleShuffle,
-                    onCycleRepeatMode = onCycleRepeatMode,
-                    onBigPlay = onBigPlay
-                )
-            }
-
-            // 2b. BUSCADOR
-            item {
-                OutlinedTextField(
-                    value = query,
-                    onValueChange = onQueryChange,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    placeholder = {
-                        Text("Buscar canciones...", color = UchihaWhiteFaint)
-                    },
-                    singleLine = true,
-                    shape = RoundedCornerShape(24.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        cursorColor = SharinganRed,
-                        focusedBorderColor = SharinganRed,
-                        unfocusedBorderColor = UchihaWhiteDim
-                    )
-                )
-            }
-
-            // 3. LISTA DE CANCIONES (filtrada por el buscador)
-            items(filteredSongs) { song ->
-                SongItem(
-                    song = song,
-                    isSelected = song == currentSong,
-                    onClick = { onSongClick(song) },
-                    onAddToPlaylist = { onAddToPlaylist(song) }
-                )
-            }
-
-            // Espacio extra al final para que la barra flotante no tape la última canción
-            item { Spacer(modifier = Modifier.height(80.dp)) }
+    // LazyColumn es ideal para listas largas, solo renderiza lo que se ve
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // 1. CABECERA MODERNA (Imagen de playlist + Título + Estadísticas)
+        item {
+            PlaylistHeader(songs = songs)
         }
+
+        // 2. BARRA DE ACCIONES (Ordenar, Aleatorio, Repetir y botón de Play grande)
+        item {
+            ActionButtonsBar(
+                isPlaying = isPlaying,
+                isShuffleEnabled = isShuffleEnabled,
+                repeatMode = repeatMode,
+                onToggleShuffle = onToggleShuffle,
+                onCycleRepeatMode = onCycleRepeatMode,
+                onBigPlay = onBigPlay
+            )
+        }
+
+        // 2b. BUSCADOR
+        item {
+            OutlinedTextField(
+                value = query,
+                onValueChange = onQueryChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                placeholder = {
+                    Text("Buscar canciones...", color = UchihaWhiteFaint)
+                },
+                singleLine = true,
+                shape = RoundedCornerShape(24.dp),
+                colors = UchihaTextFieldColors()
+            )
+        }
+
+        // 3. LISTA DE CANCIONES (filtrada por el buscador)
+        items(filteredSongs) { song ->
+            SongItem(
+                song = song,
+                isSelected = song == currentSong,
+                onClick = { onSongClick(song) },
+                onAddToPlaylist = { onAddToPlaylist(song) }
+            )
+        }
+
+        // Espacio extra al final para que la barra flotante no tape la última canción
+        item { Spacer(modifier = Modifier.height(80.dp)) }
+    }
 }
 
 @Composable
@@ -331,7 +329,7 @@ fun PlaylistHeader(songs: List<Song>) {
             elevation = CardDefaults.cardElevation(12.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.itachimange), // Puedes cambiar por otra imagen si deseas
+                painter = painterResource(id = R.drawable.itachimange),
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop

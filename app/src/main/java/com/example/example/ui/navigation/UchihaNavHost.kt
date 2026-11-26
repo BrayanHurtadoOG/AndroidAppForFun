@@ -17,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.example.data.db.Playlist
 import com.example.example.ui.MusicPlayerScreen
 import com.example.example.ui.MusicViewModel
 import com.example.example.ui.NowPlayingScreen
@@ -56,6 +57,12 @@ fun UchihaNavHost(
     navController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier
 ) {
+    // Lambdas de navegación compartidas por los dos destinos de MusicPlayerScreen.
+    val onOpenNowPlaying = { navController.navigate(UchihaDestinations.NOW_PLAYING) }
+    val onPlaylistClick = { playlist: Playlist ->
+        navController.navigate(UchihaDestinations.playlistDetail(playlist.id))
+    }
+
     NavHost(
         navController = navController,
         startDestination = UchihaDestinations.SONGS,
@@ -64,28 +71,24 @@ fun UchihaNavHost(
         composable(UchihaDestinations.SONGS) {
             MusicPlayerScreen(
                 viewModel = viewModel,
-                onOpenNowPlaying = { navController.navigate(UchihaDestinations.NOW_PLAYING) },
+                onOpenNowPlaying = onOpenNowPlaying,
                 initialTab = 0,
                 onTabSelected = { tab ->
                     if (tab == 1) navController.navigateToTab(UchihaDestinations.PLAYLISTS)
                 },
-                onPlaylistClick = { playlist ->
-                    navController.navigate(UchihaDestinations.playlistDetail(playlist.id))
-                }
+                onPlaylistClick = onPlaylistClick,
             )
         }
 
         composable(UchihaDestinations.PLAYLISTS) {
             MusicPlayerScreen(
                 viewModel = viewModel,
-                onOpenNowPlaying = { navController.navigate(UchihaDestinations.NOW_PLAYING) },
+                onOpenNowPlaying = onOpenNowPlaying,
                 initialTab = 1,
                 onTabSelected = { tab ->
                     if (tab == 0) navController.navigateToTab(UchihaDestinations.SONGS)
                 },
-                onPlaylistClick = { playlist ->
-                    navController.navigate(UchihaDestinations.playlistDetail(playlist.id))
-                }
+                onPlaylistClick = onPlaylistClick,
             )
         }
 

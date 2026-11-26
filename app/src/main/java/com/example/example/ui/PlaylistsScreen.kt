@@ -31,7 +31,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -52,6 +51,7 @@ import com.example.example.data.Song
 import com.example.example.data.db.Playlist
 import com.example.example.ui.theme.SharinganRed
 import com.example.example.ui.theme.UchihaDialog
+import com.example.example.ui.theme.UchihaTextFieldColors
 import com.example.example.ui.theme.UchihaWhiteDim
 import com.example.example.ui.theme.UchihaWhiteFaint
 import com.example.example.ui.theme.UchihaWhiteMuted
@@ -378,13 +378,7 @@ private fun CreatePlaylistDialog(
                 placeholder = { Text("Nombre de la playlist", color = Color.White.copy(alpha = 0.4f)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    cursorColor = SharinganRed,
-                    focusedBorderColor = SharinganRed,
-                    unfocusedBorderColor = UchihaWhiteDim
-                )
+                colors = UchihaTextFieldColors()
             )
         },
         confirmButton = {
